@@ -49,7 +49,8 @@
     'spelletjes_nore_en_de_schatkaart_E3.html':{
       nore:'links van het stenen pad, voor de haag',
       bas:'vlak links van het stenen pad, voor de haag',
-      kaart:'in de handen van Nore'
+      kaart:'in de handen van Nore',
+      kist:'in het onderste vak rechts van het pad'
     },
     'spelletjes_nore_en_de_geheime_sleutel_M4.html':{
       sleutel:'in het lage, brede vak op de lichtstraal onderaan',
@@ -59,6 +60,31 @@
       deken:'in het grote vak helemaal links onderaan',
       klok:'in het kleine vak rechts bovenaan',
       vaas:'in het hoge vak rechts onder de klok'
+    },
+    'spelletjes_nore_en_het_geheim_van_de_molen_E4.html':{
+      album:'in het grote, brede vak links vooraan op de tafel',
+      plank:'in het lage, brede vak boven het gat in de vloer',
+      hanger:'in het kleinste vak vooraan, vlak rechts onder het album',
+      brief:'in het kleine vak onder de plank',
+      zak:'in het hoge vak helemaal rechts, tegen de houten paal',
+      tandwiel:'in het grote vak rechts onderaan, links van de zak',
+      lantaarn:'in het hoge vak helemaal links, naast de ladder'
+    },
+    'spelletjes_nore_en_de_tijdscapsule_M5.html':{
+      capsule:'in het grote vak voor de bloemen, rechts van de groene deur',
+      dagboek:'in het grote vak helemaal links onderaan, voor de bloempot',
+      brief:'in het grote vak onderaan, rechts van het dagboek',
+      steen:'in het kleine vak onderaan, rechts van de brief',
+      foto:'in het kleine vak onderaan, rechts van de steen',
+      horloge:'in het smalle vak onderaan, rechts van de foto'
+    },
+    'spelletjes_nore_het_verhaal_dat_doorgaat_E5.html':{
+      schrift:'in het grote, brede vak midden op het houten tafelblad',
+      pen:'in het lage vak direct onder het schrift',
+      lint:'in het hoge vak links van het schrift',
+      kist:'in het grote vak helemaal links, onder de wereldbol',
+      blad:'in het grote vak rechts op het tafelblad',
+      sleutel:'in het kleine vak helemaal rechts, naast het blad'
     }
   };
   const match=page.match(/_(M3|E3|M4|E4|M5|E5)\.html$/i);
@@ -345,8 +371,11 @@
     const shape=ratio>1.55?'lage, brede ':ratio<0.68?'hoge, smalle ':'';
     const horizontal=cx<22?'helemaal links':cx<42?'links van het midden':
       cx<58?'in het midden':cx<78?'rechts van het midden':'helemaal rechts';
-    const vertical=cy<27?'bovenaan':cy<50?'boven het midden':cy<72?'onder het midden':'onderaan';
-    return 'het '+size+shape+'vak '+horizontal+', '+vertical;
+    const vertical=cy<35?'bovenaan':cy<68?'halverwege':'onderaan';
+    const position=horizontal==='in het midden'
+      ? (vertical==='halverwege'?'midden in de prent':'midden '+vertical)
+      : horizontal+(vertical==='halverwege'?'':' '+vertical);
+    return 'het '+size+shape+'vak '+position;
   }
 
   function placePhrase(t){
@@ -376,7 +405,18 @@
       : value;
   }
   function article(word){
-    return /^(jef|noor|nore|bas|tuur|sven|juf|oma|molenaar)$/i.test(word)?'':(/\b(deur|boom|bal|kaart|kist|bank|bloem|munt|veer|brug|slang|ladder|brief|foto|lamp|hut|pen|sleutel|knikker|poes|roos|vis|fles|krab|schelp|vlag|boot|plank|zak|klok|vaas|gieter)\b/i.test(word)?'de':'het');
+    const value=String(word).toLowerCase();
+    const names=new Set(['jef','noor','nore','bas','tuur','sven','oma']);
+    const deWords=new Set([
+      'auto','bal','bank','bloem','boom','boot','brief','brug','capsule','deur','eekhoorn',
+      'emmer','fles','fluit','foto','gieter','hanger','helm','hut','juf','kaart',
+      'kastanje','kist','klok','knikker','krab','ladder','laarzen','lamp','lantaarn',
+      'markering','molenaar','munt','paddenstoel','pen','pijl','plank','poes','poort',
+      'roos','rugzak','schelp','schep','slang','steen','sleutel','stok','vaas','veer',
+      'vijver','vis','vlag','vlinder','wagen','zak'
+    ]);
+    if(names.has(value)) return '';
+    return deWords.has(value)?'de':'het';
   }
   function shuffleCopy(items){
     const copy=items.slice();
