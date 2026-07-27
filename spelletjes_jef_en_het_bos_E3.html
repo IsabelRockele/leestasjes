@@ -450,7 +450,7 @@
   </div>
   <div class="sort-bins">
     <div class="bin short" id="bin-dier"><h4>DIER</h4><div class="bin-inner" id="bin-dier-inner"></div></div>
-    <div class="bin long" id="bin-voorwerp"><h4>VOOR-<br>WERP</h4><div class="bin-inner" id="bin-voorwerp-inner"></div></div>
+    <div class="bin long" id="bin-plant"><h4>VAN PLANT<br>OF BOOM</h4><div class="bin-inner" id="bin-plant-inner"></div></div>
     <div class="bin other" id="bin-persoon"><h4>PERSOON</h4><div class="bin-inner" id="bin-persoon-inner"></div></div>
   </div>
   <div class="bank" id="sort-bank"></div>
@@ -722,14 +722,14 @@ function answerQuiz(i, btn){
   setTimeout(()=>{ qIndex++; loadQuiz(); }, 1000);
 }
 
-/* ============ GAME 3: SORTEERSPEL (dier / voorwerp / persoon) ============ */
+/* ============ GAME 3: SORTEERSPEL (dier / van plant of boom / persoon) ============ */
 const sortWords = [
   {w:"EEKHOORN", cat:"dier"},
   {w:"KONIJN", cat:"dier"},
   {w:"VOGEL", cat:"dier"},
-  {w:"BLAD", cat:"voorwerp"},
-  {w:"TAK", cat:"voorwerp"},
-  {w:"NEST", cat:"voorwerp"},
+  {w:"BLAD", cat:"plant"},
+  {w:"TAK", cat:"plant"},
+  {w:"MOS", cat:"plant"},
   {w:"JEF", cat:"persoon"},
   {w:"TUUR", cat:"persoon"},
   {w:"JUF", cat:"persoon"},
@@ -739,7 +739,7 @@ let sortRemaining=0;
 function initSort(){
   document.getElementById('sort-feedback').textContent='';
   document.getElementById('bin-dier-inner').innerHTML='';
-  document.getElementById('bin-voorwerp-inner').innerHTML='';
+  document.getElementById('bin-plant-inner').innerHTML='';
   document.getElementById('bin-persoon-inner').innerHTML='';
   const bank=document.getElementById('sort-bank');
   bank.innerHTML='';
@@ -755,7 +755,7 @@ function initSort(){
 }
 function handleSortDrop(chip, target, originParent, originNext){
   const fb=document.getElementById('sort-feedback');
-  const binMap = {'bin-dier':'dier', 'bin-voorwerp':'voorwerp', 'bin-persoon':'persoon'};
+  const binMap = {'bin-dier':'dier', 'bin-plant':'plant', 'bin-persoon':'persoon'};
   if(target && binMap[target.id]){
     const wantCat = binMap[target.id];
     const isCat = chip.dataset.cat;
