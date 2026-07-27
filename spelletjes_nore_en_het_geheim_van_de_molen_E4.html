@@ -311,7 +311,7 @@
   }
   .opp-tile:active{transform:translateY(3px); box-shadow:none;}
   .opp-tile.selected{background:var(--gold); border-color:var(--gold-deep); color:#fff; box-shadow:0 4px 0 var(--gold-deep);}
-  .opp-tile.matched{background:var(--mint); border-color:var(--green-deep); color:#fff; box-shadow:0 4px 0 var(--green-deep); cursor:default;}
+  .opp-tile.matched{background:var(--pair-bg,var(--mint)); border-color:var(--pair-border,var(--green-deep)); color:#fff; box-shadow:0 4px 0 var(--pair-border,var(--green-deep)); cursor:default;}
   .opp-tile.shake{animation:shakeTile .4s;}
   @keyframes shakeTile{
     0%,100%{transform:translateX(0);}
@@ -1244,6 +1244,10 @@ const oppositePairs = [
   ["DAG","NACHT"],
   ["VOOR","ACHTER"],
 ];
+const oppositePairColors = [
+  ["#E66A4E","#A8402C"], ["#3D8F8A","#276864"], ["#8B68A6","#654878"],
+  ["#4F91C5","#326B96"], ["#D8892B","#A35F13"], ["#5E9E63","#3F7444"]
+];
 let oppSelected=[], oppMatchedCount=0;
 
 function initOpposite(){
@@ -1267,6 +1271,9 @@ function findPairPartner(word){
   }
   return null;
 }
+function findOppositePairIndex(word){
+  return oppositePairs.findIndex(pair=>pair.includes(word));
+}
 function selectOpposite(tile, word){
   if(tile.classList.contains('matched') || tile.classList.contains('selected')) return;
   if(oppSelected.length===2) return;
@@ -1276,6 +1283,11 @@ function selectOpposite(tile, word){
     const [a,b]=oppSelected;
     const fb=document.getElementById('opp-feedback');
     if(findPairPartner(a.word)===b.word){
+      const colors=oppositePairColors[findOppositePairIndex(a.word)%oppositePairColors.length];
+      [a.tile,b.tile].forEach(t=>{
+        t.style.setProperty('--pair-bg',colors[0]);
+        t.style.setProperty('--pair-border',colors[1]);
+      });
       a.tile.classList.add('matched'); a.tile.classList.remove('selected');
       b.tile.classList.add('matched'); b.tile.classList.remove('selected');
       fb.textContent='Mooi paar! 🎉';
