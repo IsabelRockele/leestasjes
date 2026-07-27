@@ -1,0 +1,45 @@
+.bonus-mission-card{--accent:#e27a3f;}
+.bonus-wrap{max-width:980px;margin:0 auto;}
+.bonus-prompt{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  margin-bottom:14px;padding:13px 16px;background:#fff;
+  border:3px solid var(--gold-deep);border-radius:18px;
+  box-shadow:0 5px 0 #d49b25;text-align:center;
+}
+.bonus-prompt-text{font-size:1.25rem;font-weight:900;line-height:1.25;}
+.bonus-listen{
+  flex:0 0 auto;width:46px;height:46px;border:3px solid var(--sky);
+  border-radius:50%;background:#fff;font-size:1.2rem;cursor:pointer;
+  box-shadow:0 4px 0 #8ab8ca;
+}
+.bonus-listen:active{transform:translateY(3px);box-shadow:none;}
+.bonus-scene{
+  position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;
+  border:5px solid #fff;border-radius:22px;background:var(--cream-deep);
+  box-shadow:var(--card-shadow);
+}
+.bonus-scene img{display:block;width:100%;height:100%;object-fit:cover;}
+.bonus-target{
+  position:absolute;border:0;border-radius:24px;background:transparent;
+  cursor:pointer;padding:0;touch-action:manipulation;
+}
+.bonus-target:focus-visible{outline:5px solid #fff;box-shadow:0 0 0 9px var(--sky);}
+.bonus-target.correct{
+  background:rgba(116,190,130,.22);
+  box-shadow:inset 0 0 0 5px #fff,0 0 0 5px var(--green);
+}
+.bonus-target.correct::after{
+  content:'✓';position:absolute;right:4px;top:4px;width:34px;height:34px;
+  display:grid;place-items:center;border-radius:50%;background:var(--green);
+  color:#fff;font-size:1.35rem;font-weight:900;
+}
+.bonus-target.clue{animation:bonusPulse .8s ease-in-out 3;}
+.bonus-target.oops{animation:bonusShake .3s ease-in-out;}
+.bonus-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:14px;}
+@keyframes bonusPulse{50%{background:rgba(255,220,90,.45);box-shadow:0 0 0 7px rgba(255,255,255,.9);}}
+@keyframes bonusShake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+@media(max-width:600px){
+  .bonus-prompt{padding:9px 10px}
+  .bonus-prompt-text{font-size:1.02rem}
+  .bonus-target.correct::after{width:25px;height:25px;font-size:1rem}
+}
