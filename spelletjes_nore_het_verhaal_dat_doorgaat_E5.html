@@ -198,6 +198,7 @@
     margin-bottom:18px;
   }
   .slot-wide{
+    width:100%; height:auto; box-sizing:border-box;
     min-height:52px;
     border:3px dashed #c9bb92;
     border-radius:12px;
@@ -235,6 +236,7 @@
     min-width:0;
   }
   .chip-sentence.placed{background:var(--mint); border-color:var(--green-deep); color:#fff; box-shadow:0 3px 0 var(--green-deep);}
+  .chip-sentence.order-wrong{background:#f7c9c3; border-color:#c85b4b; color:#7a241b; box-shadow:0 3px 0 #c85b4b;}
   .chip-sentence.dragging{opacity:.35;}
   .chip-sentence.ghost{
     position:fixed; z-index:50; pointer-events:none;
@@ -414,11 +416,13 @@
   .end-card .stars{font-size:2.4rem; margin-bottom:6px;}
   .end-card h2{color:var(--green-deep); margin:4px 0;}
 </style>
+<link rel="stylesheet" href="storybook-theme.css">
 </head>
-<body>
+<body data-story="nore-verhaal">
 
 <!-- ================= HUB ================= -->
 <div id="hub" class="screen active">
+  <a class="all-stories" href="index.html">← Alle verhalen</a>
   <div class="hub-hero">
     <span class="mascot">🦓</span>
     <h1>Nore en het Verhaal dat Doorgaat</h1>
@@ -990,12 +994,18 @@ function initOrder(){
   });
 }
 function handleOrderDrop(chip, target, originParent, originNext){
-  if(target && target.classList.contains('slot-wide') && target.children.length<=1){
+  document.querySelectorAll('#order-slots .chip-sentence').forEach(c=>c.classList.remove('order-wrong'));
+  document.getElementById('order-feedback').textContent='';
+  if(target && target.classList.contains('slot-wide')){
+    const other=target.querySelector('.chip-sentence');
+    if(other && other!==chip){
+      if(originParent.classList.contains('slot-wide')) originParent.appendChild(other);
+      else document.getElementById('order-bank').appendChild(other);
+      other.classList.toggle('placed', other.parentElement.classList.contains('slot-wide'));
+    }
     target.appendChild(chip);
     target.classList.add('filled');
     chip.classList.add('placed');
-  } else if(target && target.classList.contains('slot-wide') && target.children.length>1){
-    originParent.insertBefore(chip, originNext);
   } else if(!target){
     document.getElementById('order-bank').appendChild(chip);
     chip.classList.remove('placed');
@@ -1018,11 +1028,25 @@ function checkOrder(){
     fb.className='feedback good';
     celebrate();
   } else {
+    slots.forEach((slot,i)=>{
+      slot.querySelector('.chip-sentence').classList.toggle('order-wrong', attempt[i]!==storyOrder[i]);
+    });
     fb.textContent='Bijna! Denk na: wat gebeurde eerst in het verhaal?';
     fb.className='feedback bad';
   }
 }
-function resetOrder(){ initOrder(); }
+function resetOrder(){
+  const wrong=[...document.querySelectorAll('#order-slots .chip-sentence.order-wrong')];
+  if(!wrong.length){ initOrder(); return; }
+  const bank=document.getElementById('order-bank');
+  wrong.forEach(chip=>{
+    const slot=chip.parentElement;
+    chip.classList.remove('placed','order-wrong');
+    bank.appendChild(chip);
+    slot.classList.remove('filled');
+  });
+  document.getElementById('order-feedback').textContent='De juiste zinnen blijven staan. Probeer de andere opnieuw.';
+}
 
 /* ============ GAME 6: WOORDFLITS ============ */
 const flashWords = ["VIJVER","KAARTJE","LINT","HOOFDSTUK","FIEN","SCHRIFTJE"];
