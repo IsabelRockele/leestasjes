@@ -29,6 +29,7 @@
       </div>
       <div class="bonus-scene" id="bonus-scene">
         <img src="${game.image}" alt="${game.alt}">
+        <div class="bonus-toast" id="bonus-toast" role="status" aria-live="assertive"></div>
       </div>
       <div class="feedback" id="bonus-feedback" aria-live="polite"></div>
       <div class="bonus-actions">
@@ -50,6 +51,7 @@
   });
 
   let tasks=[],index=0,mistakes=0;
+  let toastTimer=null;
   function openBonusMission(){
     document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
     screen.classList.add('active');
@@ -68,6 +70,7 @@
     renderDots('bonus-dots',tasks.length,index);
     const prompt=screen.querySelector('#bonus-prompt');
     const feedback=screen.querySelector('#bonus-feedback');
+    hideBonusToast();
     screen.querySelectorAll('.bonus-target').forEach(b=>b.classList.remove('correct','clue','oops'));
     feedback.textContent='';
     feedback.className='feedback';
@@ -103,10 +106,25 @@
       button.classList.remove('oops');
       void button.offsetWidth;
       button.classList.add('oops');
+      showBonusToast('✕ Niet juist — kijk nog eens');
       feedback.textContent=mistakes>=2?task.hint:'Kijk nog eens goed.';
       feedback.className='feedback bad';
       if(mistakes>=2) showBonusHint();
+      setTimeout(()=>button.classList.remove('oops'),850);
     }
+  }
+  function showBonusToast(text){
+    const toast=screen.querySelector('#bonus-toast');
+    if(toastTimer) clearTimeout(toastTimer);
+    toast.textContent=text;
+    toast.classList.add('show');
+    toastTimer=setTimeout(hideBonusToast,1500);
+  }
+  function hideBonusToast(){
+    const toast=screen.querySelector('#bonus-toast');
+    if(!toast) return;
+    toast.classList.remove('show');
+    if(toastTimer){clearTimeout(toastTimer);toastTimer=null;}
   }
   function showBonusHint(){
     if(index>=tasks.length) return;
