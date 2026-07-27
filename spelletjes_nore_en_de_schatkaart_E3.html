@@ -1047,5 +1047,17 @@ function checkFlash(word){
   setTimeout(()=>{ flashIndex++; loadFlash(); }, 1400);
 }
 </script>
+<script>
+window.BONUS_MISSION={icon:"🗺️",cardTitle:"Schat-speurders",cardText:"Volg de aanwijzingen",title:"De tuin vol schatten",listen:true,image:"assets/games/nore-schatkaart-missie.webp",alt:"Nore en Bas zoeken een schat in de tuin",tasks:[
+{target:"nore",text:"Waar is Nore?",hint:"Zij houdt de kaart vast.",x:18,y:34,w:23,h:51},
+{target:"bas",text:"Vind Bas.",hint:"Bas staat naast Nore.",x:36,y:48,w:15,h:31},
+{target:"kaart",text:"Tik op de schatkaart.",hint:"Nore houdt ze vast.",x:26,y:58,w:13,h:22},
+{target:"kist",text:"Vind de kleine kist.",hint:"Kijk rechts onderaan.",x:54,y:78,w:11,h:16},
+{target:"bank",text:"Waar staat de tuinbank?",hint:"Kijk links.",x:2,y:38,w:20,h:28},
+{target:"bloem",text:"Vind de rode bloem.",hint:"Ze staat bij de kist.",x:62,y:63,w:8,h:22},
+{target:"munt",text:"Tik op de zilveren munt.",hint:"Kijk in het gras rechts.",x:75,y:80,w:6,h:10},
+{target:"lint",text:"Waar hangt het blauwe lint?",hint:"Kijk boven in de boom.",x:63,y:7,w:10,h:22}
+]};
+</script><script src="bonus-missie.js"></script>
 </body>
 </html>
