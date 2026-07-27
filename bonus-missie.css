@@ -34,7 +34,25 @@
   color:#fff;font-size:1.35rem;font-weight:900;
 }
 .bonus-target.clue{animation:bonusPulse .8s ease-in-out 3;}
-.bonus-target.oops{animation:bonusShake .3s ease-in-out;}
+.bonus-target.oops{
+  z-index:12;background:rgba(226,80,65,.35);
+  box-shadow:inset 0 0 0 5px #fff,0 0 0 6px #D94C3D;
+  animation:bonusShake .35s ease-in-out;
+}
+.bonus-target.oops::after{
+  content:'×';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:48px;height:48px;display:grid;place-items:center;border-radius:50%;
+  background:#D94C3D;color:#fff;font-size:2.4rem;font-weight:900;
+  box-shadow:0 3px 0 #9D2E25;
+}
+.bonus-toast{
+  position:absolute;z-index:30;left:50%;top:18px;transform:translate(-50%,-16px);
+  max-width:88%;padding:12px 24px;border-radius:999px;background:#D94C3D;
+  color:#fff;font-weight:900;font-size:1.08rem;text-align:center;
+  box-shadow:0 5px 0 #9D2E25;opacity:0;pointer-events:none;
+  transition:opacity .18s,transform .18s;
+}
+.bonus-toast.show{opacity:1;transform:translate(-50%,0);}
 .bonus-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:14px;}
 @keyframes bonusPulse{50%{background:rgba(255,220,90,.45);box-shadow:0 0 0 7px rgba(255,255,255,.9);}}
 @keyframes bonusShake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
@@ -42,4 +60,5 @@
   .bonus-prompt{padding:9px 10px}
   .bonus-prompt-text{font-size:1.02rem}
   .bonus-target.correct::after{width:25px;height:25px;font-size:1rem}
+  .bonus-toast{top:10px;padding:9px 15px;font-size:.9rem}
 }
