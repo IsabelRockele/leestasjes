@@ -1,0 +1,227 @@
+:root{
+  --story-accent:#2e6f40;
+  --story-accent-dark:#1f5230;
+  --story-soft:#edf6e9;
+  --story-warm:#f7d46a;
+  --story-sky:#dff2fa;
+  --story-cover:none;
+}
+
+body[data-story]{
+  --green:var(--story-accent);
+  --green-deep:var(--story-accent-dark);
+  --cream:var(--story-soft);
+  --cream-deep:color-mix(in srgb, var(--story-soft) 82%, #d8c99f);
+  background:
+    radial-gradient(circle at 8% 8%, color-mix(in srgb, var(--story-warm) 42%, transparent) 0 7rem, transparent 7.1rem),
+    radial-gradient(circle at 92% 34%, color-mix(in srgb, var(--story-accent) 10%, transparent) 0 11rem, transparent 11.1rem),
+    linear-gradient(160deg, var(--story-sky), var(--story-soft) 52%, #fffaf0);
+  background-attachment:fixed;
+}
+
+body[data-story]::before,
+body[data-story]::after{
+  content:"";
+  position:fixed;
+  z-index:-1;
+  opacity:.14;
+  pointer-events:none;
+}
+body[data-story]::before{
+  width:230px;
+  height:230px;
+  left:-75px;
+  bottom:-72px;
+  border:20px solid var(--story-accent);
+  border-radius:48% 52% 45% 55%;
+  transform:rotate(18deg);
+}
+body[data-story]::after{
+  width:150px;
+  height:150px;
+  right:-45px;
+  top:22%;
+  background:var(--story-warm);
+  border-radius:64% 36% 62% 38%;
+  transform:rotate(-22deg);
+}
+
+body[data-story] .screen{
+  max-width:780px;
+}
+
+body[data-story] #hub{
+  padding-top:18px;
+}
+
+.all-stories{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  color:var(--story-accent-dark);
+  background:rgba(255,255,255,.84);
+  border:2px solid color-mix(in srgb, var(--story-accent) 42%, #fff);
+  border-radius:999px;
+  padding:8px 13px;
+  text-decoration:none;
+  font-weight:800;
+  box-shadow:0 4px 0 color-mix(in srgb, var(--story-accent) 24%, transparent);
+}
+
+body[data-story] .hub-hero{
+  display:grid;
+  grid-template-columns:170px 1fr;
+  grid-template-rows:auto auto;
+  column-gap:25px;
+  align-items:center;
+  text-align:left;
+  margin-top:16px;
+  padding:22px;
+  min-height:228px;
+  border-radius:30px;
+  background:rgba(255,255,255,.88);
+  border:3px solid color-mix(in srgb, var(--story-accent) 42%, #fff);
+  box-shadow:0 12px 30px rgba(52,63,43,.14), 0 7px 0 color-mix(in srgb, var(--story-accent) 30%, transparent);
+  overflow:hidden;
+}
+
+body[data-story] .hub-hero::before{
+  content:"";
+  grid-row:1 / 3;
+  width:154px;
+  height:202px;
+  border-radius:18px;
+  background-image:var(--story-cover);
+  background-position:center top;
+  background-size:cover;
+  box-shadow:0 8px 18px rgba(31,42,28,.2);
+  border:4px solid #fff;
+  transform:rotate(-2deg);
+}
+
+body[data-story] .hub-hero .mascot{display:none;}
+body[data-story] .hub-hero h1{
+  align-self:end;
+  color:var(--story-accent-dark);
+  font-size:clamp(1.85rem,5vw,2.55rem);
+  line-height:1.04;
+  margin:0 0 6px;
+}
+body[data-story] .hub-hero p{
+  align-self:start;
+  color:color-mix(in srgb, var(--story-accent-dark) 72%, #6b6254);
+}
+
+body[data-story] .game-card{
+  background:rgba(255,255,255,.94);
+  border-width:2px;
+  box-shadow:0 7px 0 color-mix(in srgb, var(--accent) 75%, #5d513f), 0 12px 24px rgba(65,59,45,.1);
+  overflow:hidden;
+}
+body[data-story] .game-card::after{
+  content:"";
+  position:absolute;
+  width:54px;
+  height:54px;
+  left:-20px;
+  bottom:-24px;
+  border:7px solid color-mix(in srgb, var(--accent) 24%, transparent);
+  border-radius:50%;
+}
+body[data-story] .game-card .icon{
+  filter:drop-shadow(0 3px 0 rgba(0,0,0,.08));
+}
+
+body[data-story] .prompt-box,
+body[data-story] .slot-col,
+body[data-story] .bank,
+body[data-story] .sentence-zone,
+body[data-story] .quiz-card,
+body[data-story] .flash-stage{
+  box-shadow:0 9px 24px rgba(60,55,43,.08);
+}
+
+body[data-story] .topbar{
+  background:rgba(255,255,255,.78);
+  border-radius:20px;
+  padding:9px 12px;
+  box-shadow:0 5px 16px rgba(60,55,43,.08);
+}
+
+@media (max-width:560px){
+  body[data-story] .hub-hero{
+    grid-template-columns:108px 1fr;
+    column-gap:16px;
+    min-height:170px;
+    padding:16px;
+    border-radius:24px;
+  }
+  body[data-story] .hub-hero::before{
+    width:98px;
+    height:134px;
+    border-radius:13px;
+  }
+  body[data-story] .hub-hero h1{font-size:1.65rem;}
+  body[data-story] .hub-hero p{font-size:.92rem;}
+}
+
+body[data-story="jef-poes"]{
+  --story-accent:#6f4ac6; --story-accent-dark:#49308b; --story-soft:#fff4d9;
+  --story-warm:#ffd33d; --story-sky:#e6f7ff;
+  --story-cover:url("assets/covers/Jef_en_de_poes.webp");
+}
+body[data-story="noor-bal"]{
+  --story-accent:#e54c8d; --story-accent-dark:#9f2d62; --story-soft:#fff0f5;
+  --story-warm:#f04c42; --story-sky:#e8f8ff;
+  --story-cover:url("assets/covers/Noor_en_de_bal.webp");
+}
+body[data-story="jef-bos"]{
+  --story-accent:#4f8b3f; --story-accent-dark:#2e5a28; --story-soft:#f1f6df;
+  --story-warm:#f6c63e; --story-sky:#e0f3da;
+  --story-cover:url("assets/covers/Jef_en_de_klas_in_het_bos.webp");
+}
+body[data-story="nore-schatkaart"]{
+  --story-accent:#cc3d78; --story-accent-dark:#872653; --story-soft:#fff1e1;
+  --story-warm:#e0b44d; --story-sky:#dff4ff;
+  --story-cover:url("assets/covers/Nore_en__de_schatkaart.webp");
+}
+body[data-story="jef-speurtocht"]{
+  --story-accent:#6e7434; --story-accent-dark:#42481e; --story-soft:#f3efd9;
+  --story-warm:#d98a3b; --story-sky:#e1f1dd;
+  --story-cover:url("assets/covers/Jef_en_de_klas_op_bosspeurtocht.webp");
+}
+body[data-story="nore-sleutel"]{
+  --story-accent:#d4477f; --story-accent-dark:#8c2856; --story-soft:#fff0e4;
+  --story-warm:#d9ad39; --story-sky:#dcf4ff;
+  --story-cover:url("assets/covers/Nore_en_de_geheime_sleutel.webp");
+}
+body[data-story="jef-brandweer"]{
+  --story-accent:#d44838; --story-accent-dark:#8c2b22; --story-soft:#fff0de;
+  --story-warm:#f1b640; --story-sky:#dff2f5;
+  --story-cover:url("assets/covers/Jef_en_de_klas_bij_de_brandweer.webp");
+}
+body[data-story="nore-molen"]{
+  --story-accent:#ab3d78; --story-accent-dark:#722651; --story-soft:#f7f0df;
+  --story-warm:#d6ad61; --story-sky:#dceef4;
+  --story-cover:url("assets/covers/Nore_en_het_geheim_van_de_molen.webp");
+}
+body[data-story="jef-zee"]{
+  --story-accent:#2185ad; --story-accent-dark:#155873; --story-soft:#e8f8fb;
+  --story-warm:#f3bc55; --story-sky:#d8f4ff;
+  --story-cover:url("assets/covers/Jef_en_de_klas_aan_zee.webp");
+}
+body[data-story="nore-tijdscapsule"]{
+  --story-accent:#a83f7b; --story-accent-dark:#6f2854; --story-soft:#f7f0df;
+  --story-warm:#c79b4c; --story-sky:#dcecf1;
+  --story-cover:url("assets/covers/Nore_en_de_tijdscapsule.webp");
+}
+body[data-story="jef-bosklassen"]{
+  --story-accent:#d06a2f; --story-accent-dark:#824019; --story-soft:#f6ead8;
+  --story-warm:#f0a941; --story-sky:#dce9e4;
+  --story-cover:url("assets/covers/Jef_en_de_klas_op_bosklassen.webp");
+}
+body[data-story="nore-verhaal"]{
+  --story-accent:#ad426e; --story-accent-dark:#712846; --story-soft:#f8eedf;
+  --story-warm:#d7a859; --story-sky:#eee3d5;
+  --story-cover:url("assets/covers/Nore_en_het_verhaal_dat_doorgaat.webp");
+}
