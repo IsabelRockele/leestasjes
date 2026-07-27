@@ -313,6 +313,15 @@
   .quiz-opt:active{transform:translateY(4px); box-shadow:none;}
   .quiz-opt.correct{background:var(--mint); border-color:var(--green-deep); color:#fff; box-shadow:0 5px 0 var(--green-deep);}
   .quiz-opt.wrong{background:var(--coral); border-color:#a8402c; color:#fff; box-shadow:0 5px 0 #a8402c;}
+  .listen-line,.answer-listen-row{display:flex; align-items:center; gap:10px;}
+  .listen-line{justify-content:center;}
+  .answer-listen-row .quiz-opt{flex:1;}
+  .listen-btn{
+    flex:0 0 auto; width:46px; height:46px; border-radius:50%;
+    border:3px solid var(--sky); background:#fff; color:var(--ink);
+    font-size:1.25rem; cursor:pointer; box-shadow:0 4px 0 #8ab8ca;
+  }
+  .listen-btn:active,.listen-btn.speaking{transform:translateY(3px); box-shadow:none; background:var(--sky);}
 
   /* sort */
   .sort-bins{display:flex; gap:14px; margin-bottom:18px;}
@@ -419,7 +428,7 @@
   </div>
   <div class="progress-dots" id="sentence-dots"></div>
   <div class="prompt-box">
-    <div class="hint">Zet de woorden in de juiste volgorde</div>
+    <div class="listen-line"><div class="hint">Zet de woorden in de juiste volgorde</div><button class="listen-btn" type="button" onclick="speakText('Zet de woorden in de juiste volgorde', this)" aria-label="Luister naar de opdracht" title="Luister">&#128266;</button></div>
   </div>
   <div class="slot-row" id="sentence-slots"></div>
   <div class="bank" id="sentence-bank"></div>
@@ -446,7 +455,7 @@
     <h2>📦 Sorteerspel</h2>
   </div>
   <div class="prompt-box">
-    <div class="hint">Sleep elk woord naar de juiste doos</div>
+    <div class="listen-line"><div class="hint">Sleep elk woord naar de juiste doos</div><button class="listen-btn" type="button" onclick="speakText('Sleep elk woord naar de juiste doos', this)" aria-label="Luister naar de opdracht" title="Luister">&#128266;</button></div>
   </div>
   <div class="sort-bins">
     <div class="bin short" id="bin-dier"><h4>DIER</h4><div class="bin-inner" id="bin-dier-inner"></div></div>
@@ -468,7 +477,7 @@
   </div>
   <div class="progress-dots" id="wrong-dots"></div>
   <div class="prompt-box">
-    <div class="hint">Tik op het woord dat niet klopt met het verhaal</div>
+    <div class="listen-line"><div class="hint">Tik op het woord dat niet klopt met het verhaal</div><button class="listen-btn" type="button" onclick="speakText('Tik op het woord dat niet klopt met het verhaal', this)" aria-label="Luister naar de opdracht" title="Luister">&#128266;</button></div>
   </div>
   <div class="sentence-tap" id="wrong-sentence"></div>
   <div class="feedback" id="wrong-feedback"></div>
@@ -481,7 +490,7 @@
     <h2>📖 Verhaal-volgorde</h2>
   </div>
   <div class="prompt-box">
-    <div class="hint">Sleep de zinnen in de volgorde van het verhaal</div>
+    <div class="listen-line"><div class="hint">Sleep de zinnen in de volgorde van het verhaal</div><button class="listen-btn" type="button" onclick="speakText('Sleep de zinnen in de volgorde van het verhaal', this)" aria-label="Luister naar de opdracht" title="Luister">&#128266;</button></div>
   </div>
   <div class="slot-col" id="order-slots"></div>
   <div class="bank" id="order-bank"></div>
@@ -503,7 +512,24 @@
 
 <script>
 /* ============ shared helpers ============ */
+function speakText(text, button){
+  if(!('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+  document.querySelectorAll('.listen-btn.speaking').forEach(b=>b.classList.remove('speaking'));
+  const utterance=new SpeechSynthesisUtterance(text);
+  const voices=window.speechSynthesis.getVoices();
+  const dutch=voices.filter(v=>v.lang && v.lang.toLowerCase().startsWith('nl'));
+  const femaleNames=/colette|fenna|ilse|claire|laura|lotte|sofie|ellen|female|vrouw/i;
+  utterance.voice=dutch.find(v=>femaleNames.test(v.name)) || dutch.find(v=>v.lang.toLowerCase()==='nl-be') || dutch[0] || null;
+  utterance.lang=utterance.voice ? utterance.voice.lang : 'nl-BE';
+  utterance.rate=.82;
+  utterance.pitch=1.05;
+  if(button) button.classList.add('speaking');
+  utterance.onend=utterance.onerror=()=>{ if(button) button.classList.remove('speaking'); };
+  window.speechSynthesis.speak(utterance);
+}
 function goHub(){
+  if('speechSynthesis' in window) window.speechSynthesis.cancel();
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById('hub').classList.add('active');
 }
@@ -696,7 +722,7 @@ function loadQuiz(){
     return;
   }
   const item=quiz[qIndex];
-  body.innerHTML = `<div class="prompt-box"><div class="big">${item.q}</div></div>
+  body.innerHTML = `<div class="prompt-box"><div class="listen-line"><div class="big">${item.q}</div><button class="listen-btn" type="button" onclick="speakText(quiz[qIndex].q, this)" aria-label="Luister naar de vraag" title="Luister">&#128266;</button></div></div>
     <div class="quiz-options" id="quiz-options"></div>`;
   const optsEl=document.getElementById('quiz-options');
   item.opts.forEach((opt,i)=>{
@@ -704,7 +730,18 @@ function loadQuiz(){
     b.className='quiz-opt';
     b.textContent=opt;
     b.onclick=()=>answerQuiz(i,b);
-    optsEl.appendChild(b);
+    const row=document.createElement('div');
+    row.className='answer-listen-row';
+    const listen=document.createElement('button');
+    listen.className='listen-btn';
+    listen.type='button';
+    listen.innerHTML='&#128266;';
+    listen.setAttribute('aria-label','Luister naar antwoord '+(i+1));
+    listen.title='Luister';
+    listen.onclick=()=>speakText(opt,listen);
+    row.appendChild(b);
+    row.appendChild(listen);
+    optsEl.appendChild(row);
   });
 }
 function answerQuiz(i, btn){
