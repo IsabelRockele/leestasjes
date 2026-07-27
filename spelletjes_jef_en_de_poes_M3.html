@@ -379,7 +379,25 @@
     color:#fff; font-size:1.4rem; font-weight:900; box-shadow:0 2px 0 var(--green-deep);
   }
   .seek-hotspot.clue{animation:seekPulse .8s ease-in-out 3;}
-  .seek-hotspot.oops{animation:seekShake .3s ease-in-out;}
+  .seek-hotspot.oops{
+    z-index:12; background:rgba(226,80,65,.35);
+    box-shadow:inset 0 0 0 5px #fff,0 0 0 6px #D94C3D;
+    animation:seekShake .35s ease-in-out;
+  }
+  .seek-hotspot.oops::after{
+    content:'×'; position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+    width:48px; height:48px; display:grid; place-items:center; border-radius:50%;
+    background:#D94C3D; color:#fff; font-size:2.4rem; font-weight:900;
+    box-shadow:0 3px 0 #9D2E25;
+  }
+  .seek-toast{
+    position:absolute; z-index:30; left:50%; top:18px; transform:translate(-50%,-16px);
+    max-width:88%; padding:12px 24px; border-radius:999px; background:#D94C3D;
+    color:#fff; font-weight:900; font-size:1.08rem; text-align:center;
+    box-shadow:0 5px 0 #9D2E25; opacity:0; pointer-events:none;
+    transition:opacity .18s,transform .18s;
+  }
+  .seek-toast.show{opacity:1; transform:translate(-50%,0);}
   .seek-actions{display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-top:14px;}
   @keyframes seekPulse{50%{background:rgba(255,220,90,.45); box-shadow:0 0 0 7px rgba(255,255,255,.9);}}
   @keyframes seekShake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
@@ -387,6 +405,7 @@
     .seek-panel{padding:9px 10px;}
     .seek-panel .big{font-size:1.05rem;}
     .seek-hotspot.found::after{width:25px;height:25px;font-size:1rem;}
+    .seek-toast{top:10px;padding:9px 15px;font-size:.9rem;}
   }
 
   /* celebration */
@@ -567,6 +586,7 @@
     </div>
     <div class="seek-scene" id="seek-scene">
       <img src="assets/games/jef-poes-zoekplaat.webp" alt="Jef en de witte poes in een kleurrijke tuin">
+      <div class="seek-toast" id="seek-toast" role="status" aria-live="assertive"></div>
       <button class="seek-hotspot" data-seek="boom" onclick="chooseSeek('boom',this)" aria-label="boom" style="left:0%;top:0%;width:24%;height:72%"></button>
       <button class="seek-hotspot" data-seek="jef" onclick="chooseSeek('jef',this)" aria-label="Jef" style="left:20%;top:12%;width:24%;height:62%"></button>
       <button class="seek-hotspot" data-seek="vlinder" onclick="chooseSeek('vlinder',this)" aria-label="vlinder" style="left:42%;top:13%;width:8%;height:14%"></button>
@@ -1041,7 +1061,7 @@ const seekTaskBank = [
   {target:"jef", text:"Waar is Jef?", hint:"Hij zit op zijn knie."},
   {target:"boom", text:"Tik op de grote boom.", hint:"Kijk helemaal links."}
 ];
-let seekTasks=[], seekIndex=0, seekMistakes=0;
+let seekTasks=[], seekIndex=0, seekMistakes=0, seekToastTimer=null;
 
 function initSeek(){
   seekTasks=shuffle(seekTaskBank);
@@ -1058,6 +1078,7 @@ function loadSeekTask(){
   const prompt=document.getElementById('seek-prompt');
   const feedback=document.getElementById('seek-feedback');
   const listen=document.getElementById('seek-listen');
+  hideSeekToast();
   feedback.textContent='';
   feedback.className='feedback';
   seekMistakes=0;
@@ -1093,10 +1114,25 @@ function chooseSeek(target,button){
     button.classList.remove('oops');
     void button.offsetWidth;
     button.classList.add('oops');
+    showSeekToast('✕ Niet juist — kijk nog eens');
     feedback.textContent=seekMistakes>=2 ? seekTasks[seekIndex].hint : 'Kijk nog eens goed.';
     feedback.className='feedback bad';
     if(seekMistakes>=2) showSeekHint();
+    setTimeout(()=>button.classList.remove('oops'),850);
   }
+}
+function showSeekToast(text){
+  const toast=document.getElementById('seek-toast');
+  if(seekToastTimer) clearTimeout(seekToastTimer);
+  toast.textContent=text;
+  toast.classList.add('show');
+  seekToastTimer=setTimeout(hideSeekToast,1500);
+}
+function hideSeekToast(){
+  const toast=document.getElementById('seek-toast');
+  if(!toast) return;
+  toast.classList.remove('show');
+  if(seekToastTimer){clearTimeout(seekToastTimer);seekToastTimer=null;}
 }
 function showSeekHint(){
   if(seekIndex>=seekTasks.length) return;
@@ -1208,5 +1244,6 @@ function checkFlash(word){
 }
 </script>
 <script src="sentence-puzzle-helper.js"></script>
+<script src="wrong-game-helper.js"></script>
 </body>
 </html>
