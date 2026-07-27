@@ -1047,5 +1047,17 @@ function checkFlash(word){
   setTimeout(()=>{ flashIndex++; loadFlash(); }, 1400);
 }
 </script>
+<script>
+window.BONUS_MISSION={icon:"⚽",cardTitle:"Waar is de bal?",cardText:"Lees, kijk en tik",title:"Speuren met Noor",listen:true,image:"assets/games/noor-bal-missie.webp",alt:"Noor en Bas spelen met een bal in de tuin",tasks:[
+{target:"noor",text:"Waar is Noor?",hint:"Noor draagt een roze trui.",x:17,y:15,w:25,h:66},
+{target:"bas",text:"Vind Bas.",hint:"Bas is de bruine hond.",x:32,y:43,w:25,h:34},
+{target:"bal",text:"Tik op de rode bal.",hint:"Kijk onderaan in het midden.",x:45,y:68,w:12,h:20},
+{target:"boom",text:"Vind de grote boom.",hint:"Kijk links.",x:0,y:0,w:25,h:70},
+{target:"emmer",text:"Waar is de blauwe emmer?",hint:"Kijk rechts onderaan.",x:82,y:69,w:12,h:22},
+{target:"bloem",text:"Vind de gele bloem.",hint:"Kijk links onderaan.",x:4,y:66,w:10,h:22},
+{target:"poort",text:"Tik op de open poort.",hint:"Kijk achter Bas.",x:59,y:18,w:14,h:45},
+{target:"bank",text:"Waar staat de bank?",hint:"Kijk rechts.",x:76,y:32,w:22,h:33}
+]};
+</script><script src="bonus-missie.js"></script>
 </body>
 </html>
