@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>Nore en het Geheim van de Molen — Spelletjes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FBF6EC;
+    --cream-deep:#F3E9D4;
+    --ink:#2B2B26;
+    --green:#2E6F40;
+    --green-deep:#1F5230;
+    --gold:#E0A63E;
+    --gold-deep:#B36B00;
+    --coral:#E8735C;
+    --mint:#4FAF7C;
+    --sky:#4B93B8;
+    --plum:#8B5FA8;
+    --card-shadow: 0 6px 0 rgba(43,43,38,0.12);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--cream);
+    font-family:'Nunito',sans-serif;
+    color:var(--ink);
+    min-height:100vh;
+    overflow-x:hidden;
+    touch-action:manipulation;
+  }
+  h1,h2,h3,.display{
+    font-family:'Baloo 2',sans-serif;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;}
+  }
+
+  /* ---------- layout scaffolding ---------- */
+  .screen{
+    display:none;
+    min-height:100vh;
+    padding:20px 16px 40px;
+    max-width:720px;
+    margin:0 auto;
+    position:relative;
+  }
+  .screen.active{display:block;}
+
+  .topbar{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:18px;
+  }
+  .back-btn{
+    background:var(--cream-deep);
+    border:none;
+    width:46px;height:46px;
+    border-radius:50%;
+    font-size:22px;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:var(--card-shadow);
+    cursor:pointer;
+    color:var(--ink);
+    flex-shrink:0;
+  }
+  .back-btn:active{transform:translateY(3px); box-shadow:none;}
+  .topbar h2{margin:0; font-size:1.3rem; color:var(--green-deep);}
+
+  /* ---------- hub ---------- */
+  .hub-hero{
+    text-align:center;
+    padding:18px 10px 8px;
+  }
+  .hub-hero .mascot{font-size:52px; display:block; margin-bottom:4px;}
+  .hub-hero h1{
+    font-size:1.9rem;
+    color:var(--green-deep);
+    margin:0 0 4px;
+  }
+  .hub-hero p{
+    margin:0;
+    color:#6b6a5f;
+    font-weight:700;
+    font-size:1.05rem;
+  }
+
+  .card-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+    margin-top:22px;
+  }
+  @media (max-width:480px){
+    .card-grid{grid-template-columns:1fr;}
+  }
+
+  .game-card{
+    --accent: var(--green);
+    position:relative;
+    background:#fff;
+    border-radius:22px;
+    padding:22px 16px 18px;
+    text-align:center;
+    cursor:pointer;
+    border:3px solid var(--accent);
+    box-shadow:0 7px 0 var(--accent);
+    transition:transform .12s ease;
+  }
+  .game-card:active{transform:translateY(6px); box-shadow:0 1px 0 var(--accent);}
+  .game-card .peel{
+    position:absolute; top:-2px; right:-2px;
+    width:34px; height:34px;
+    background:var(--cream);
+    border-left:3px solid var(--accent);
+    border-bottom:3px solid var(--accent);
+    border-radius:0 20px 0 20px;
+  }
+  .game-card .icon{font-size:40px; display:block; margin-bottom:8px;}
+  .game-card h3{margin:0 0 4px; font-size:1.15rem; color:var(--ink);}
+  .game-card p{margin:0; font-size:.85rem; color:#7a7a6e; font-weight:700;}
+  .game-card.c1{--accent:var(--green);}
+  .game-card.c2{--accent:var(--sky);}
+  .game-card.c3{--accent:var(--gold-deep);}
+  .game-card.c4{--accent:var(--coral);}
+  .game-card.c5{--accent:#3D8F8A;}
+  .game-card.c6{--accent:#C0577A;}
+  .game-card.c7{--accent:#6B7FD7;}
+  .game-card.c8{--accent:#4A9B6E;}
+  .game-card.c9{--accent:#B85C9E;}
+
+  /* ---------- shared game bits ---------- */
+  .prompt-box{
+    background:#fff;
+    border-radius:18px;
+    padding:18px;
+    box-shadow:var(--card-shadow);
+    text-align:center;
+    margin-bottom:20px;
+  }
+  .prompt-box .hint{font-weight:800; color:var(--gold-deep); font-size:1rem; margin-bottom:6px;}
+  .prompt-box .big{font-size:1.3rem; font-weight:800;}
+
+  .chip{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    background:var(--cream-deep);
+    border:2px solid #d8cca8;
+    border-radius:14px;
+    padding:10px 16px;
+    margin:6px;
+    font-weight:800;
+    font-size:1.15rem;
+    cursor:grab;
+    user-select:none;
+    -webkit-user-select:none;
+    -webkit-touch-callout:none;
+    touch-action:none;
+    box-shadow:0 3px 0 #d8cca8;
+    position:relative;
+  }
+  .chip.dragging{opacity:.35;}
+  .chip.placed{background:var(--mint); border-color:var(--green-deep); color:#fff; box-shadow:0 3px 0 var(--green-deep);}
+  .chip.ghost{
+    position:fixed; z-index:50; pointer-events:none;
+    background:var(--gold); color:#fff; border-color:var(--gold-deep);
+    box-shadow:0 8px 14px rgba(0,0,0,.25);
+  }
+
+  .slot-row{
+    display:flex; flex-wrap:wrap; justify-content:center;
+    gap:8px; min-height:64px;
+    background:var(--cream-deep);
+    border-radius:16px;
+    padding:12px;
+    margin-bottom:18px;
+  }
+  .slot{
+    width:78px; height:48px;
+    border:3px dashed #c9bb92;
+    border-radius:12px;
+    display:flex; align-items:center; justify-content:center;
+    background:rgba(255,255,255,.5);
+  }
+  .slot.filled{border-style:solid;}
+  .slot.dropready{border-color:var(--green); background:#e4f4e9;}
+
+  .slot-col{
+    display:flex; flex-direction:column; gap:8px;
+    background:var(--cream-deep);
+    border-radius:16px;
+    padding:12px;
+    margin-bottom:18px;
+  }
+  .slot-wide{
+    min-height:52px;
+    border:3px dashed #c9bb92;
+    border-radius:12px;
+    display:flex; align-items:center;
+    padding:0 12px;
+    background:rgba(255,255,255,.5);
+  }
+  .slot-wide.filled{border-style:solid;}
+  .slot-wide .num{
+    font-family:'Baloo 2',sans-serif; font-weight:800; color:var(--gold-deep);
+    margin-right:10px; flex-shrink:0;
+  }
+  .chip-sentence{
+    display:flex; align-items:center;
+    background:var(--cream-deep);
+    border:2px solid #d8cca8;
+    border-radius:14px;
+    padding:12px 16px;
+    margin:6px 0;
+    font-weight:800;
+    font-size:1.05rem;
+    cursor:grab;
+    user-select:none;
+    -webkit-user-select:none;
+    -webkit-touch-callout:none;
+    touch-action:none;
+    box-shadow:0 3px 0 #d8cca8;
+    width:100%;
+    min-width:0;
+    box-sizing:border-box;
+  }
+  .slot-wide .chip-sentence{
+    flex:1 1 auto;
+    width:auto;
+    min-width:0;
+  }
+  .chip-sentence.placed{background:var(--mint); border-color:var(--green-deep); color:#fff; box-shadow:0 3px 0 var(--green-deep);}
+  .chip-sentence.dragging{opacity:.35;}
+  .chip-sentence.ghost{
+    position:fixed; z-index:50; pointer-events:none;
+    background:var(--gold); color:#fff; border-color:var(--gold-deep);
+    box-shadow:0 8px 14px rgba(0,0,0,.25);
+  }
+
+  .speed-row{display:flex; justify-content:center; gap:10px; margin:14px 0;}
+  .speed-btn{
+    font-family:'Baloo 2',sans-serif; font-weight:700; font-size:.95rem;
+    border:3px solid #d8cca8; background:#fff; border-radius:14px;
+    padding:8px 16px; cursor:pointer;
+  }
+  .speed-btn.active{background:#C0577A; border-color:#8f3d59; color:#fff;}
+
+  .flash-stage{
+    background:#fff; border-radius:22px; min-height:160px;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:var(--card-shadow); margin-bottom:16px;
+  }
+  .flash-word{
+    font-family:'Baloo 2',sans-serif; font-weight:800; font-size:2.6rem;
+    color:var(--green-deep); letter-spacing:2px;
+  }
+  .flash-timer{
+    font-family:'Baloo 2',sans-serif; font-weight:700; font-size:1.1rem;
+    color:var(--gold-deep);
+  }
+  .type-input{
+    width:100%; box-sizing:border-box;
+    font-family:'Baloo 2',sans-serif; font-size:1.6rem; text-align:center;
+    padding:14px; border-radius:14px; border:3px solid #d8cca8;
+    margin-bottom:14px; letter-spacing:2px;
+  }
+  .type-input.correct{border-color:var(--green-deep); background:#e4f4e9;}
+  .type-input.wrong{border-color:#a8402c; background:#fdeae7;}
+
+  .cloze-sentence{
+    font-family:'Baloo 2',sans-serif; font-weight:700; font-size:1.3rem;
+    text-align:center; line-height:1.6;
+  }
+  .cloze-blank{
+    display:inline-block; min-width:90px;
+    border-bottom:3px dashed var(--gold-deep);
+    color:var(--gold-deep);
+    padding:0 6px;
+  }
+  .cloze-blank.filled-good{border-bottom-style:solid; border-color:var(--green-deep); color:var(--green-deep);}
+  .cloze-blank.filled-bad{border-bottom-style:solid; border-color:#a8402c; color:#a8402c;}
+  .cloze-options{display:grid; gap:12px; margin-top:22px;}
+  .cloze-opt{
+    background:#fff; border:3px solid #d8cca8; border-radius:16px;
+    padding:14px; font-family:'Baloo 2',sans-serif; font-weight:700; font-size:1.1rem;
+    cursor:pointer; box-shadow:0 5px 0 #d8cca8;
+  }
+  .cloze-opt:active{transform:translateY(4px); box-shadow:none;}
+  .cloze-opt.correct{background:var(--mint); border-color:var(--green-deep); color:#fff; box-shadow:0 5px 0 var(--green-deep);}
+  .cloze-opt.wrong{background:var(--coral); border-color:#a8402c; color:#fff; box-shadow:0 5px 0 #a8402c;}
+
+  .word-tap.verb-hit{background:#4A9B6E; color:#fff; border-color:#33714f;}
+  .word-tap.subject-hit{background:#4A9B6E; color:#fff; border-color:#33714f;}
+
+  .opp-grid{
+    display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;
+    margin-bottom:16px;
+  }
+  @media (max-width:480px){ .opp-grid{grid-template-columns:1fr 1fr;} }
+  .opp-tile{
+    background:#fff; border:3px solid #d8cca8; border-radius:14px;
+    padding:16px 8px; text-align:center; cursor:pointer;
+    font-family:'Baloo 2',sans-serif; font-weight:700; font-size:1.05rem;
+    box-shadow:0 4px 0 #d8cca8;
+  }
+  .opp-tile:active{transform:translateY(3px); box-shadow:none;}
+  .opp-tile.selected{background:var(--gold); border-color:var(--gold-deep); color:#fff; box-shadow:0 4px 0 var(--gold-deep);}
+  .opp-tile.matched{background:var(--mint); border-color:var(--green-deep); color:#fff; box-shadow:0 4px 0 var(--green-deep); cursor:default;}
+  .opp-tile.shake{animation:shakeTile .4s;}
+  @keyframes shakeTile{
+    0%,100%{transform:translateX(0);}
+    25%{transform:translateX(-6px);}
+    75%{transform:translateX(6px);}
+  }
+
+  .bank{
+    display:flex; flex-wrap:wrap; justify-content:center;
+    padding:10px 4px;
+  }
+
+  .action-row{display:flex; justify-content:center; gap:12px; margin-top:8px;}
+  .btn{
+    font-family:'Baloo 2',sans-serif;
+    font-weight:700;
+    font-size:1.05rem;
+    border:none;
+    border-radius:16px;
+    padding:12px 22px;
+    cursor:pointer;
+    background:var(--green);
+    color:#fff;
+    box-shadow:0 5px 0 var(--green-deep);
+  }
+  .btn:active{transform:translateY(4px); box-shadow:none;}
+  .btn.secondary{background:var(--cream-deep); color:var(--ink); box-shadow:0 5px 0 #d8cca8;}
+
+  .feedback{
+    text-align:center; font-weight:800; font-size:1.15rem;
+    min-height:30px; margin-top:6px;
+  }
+  .feedback.good{color:var(--green-deep);}
+  .feedback.bad{color:var(--coral);}
+
+  .progress-dots{display:flex; justify-content:center; gap:8px; margin:14px 0;}
+  .progress-dots span{width:10px;height:10px;border-radius:50%; background:#d8cca8;}
+  .progress-dots span.done{background:var(--green);}
+  .progress-dots span.current{background:var(--gold-deep);}
+
+  /* quiz */
+  .quiz-options{display:grid; gap:12px; margin-top:6px;}
+  .quiz-opt{
+    background:#fff; border:3px solid #d8cca8; border-radius:16px;
+    padding:14px; font-family:'Baloo 2',sans-serif; font-weight:700; font-size:1.1rem;
+    cursor:pointer; box-shadow:0 5px 0 #d8cca8; text-align:left;
+  }
+  .quiz-opt:active{transform:translateY(4px); box-shadow:none;}
+  .quiz-opt.correct{background:var(--mint); border-color:var(--green-deep); color:#fff; box-shadow:0 5px 0 var(--green-deep);}
+  .quiz-opt.wrong{background:var(--coral); border-color:#a8402c; color:#fff; box-shadow:0 5px 0 #a8402c;}
+
+  /* sort */
+  .sort-bins{display:flex; gap:14px; margin-bottom:18px;}
+  .bin{
+    flex:1; min-height:170px;
+    border-radius:18px;
+    border:3px solid var(--accent, var(--sky));
+    background:#fff;
+    padding:12px 6px;
+    text-align:center;
+  }
+  .bin h4{margin:2px 0 10px; font-family:'Baloo 2',sans-serif; color:var(--accent, var(--sky)); font-size:.95rem; line-height:1.15;}
+  .bin .bin-inner{display:flex; flex-wrap:wrap; justify-content:center; gap:6px; min-height:60px;}
+  .bin.short{--accent:var(--sky);}
+  .bin.long{--accent:var(--plum);}
+  .bin.other{--accent:var(--gold-deep);}
+  .bin.dropready{background:var(--cream-deep);}
+
+  /* wrong-word game */
+  .sentence-tap{
+    display:flex; flex-wrap:wrap; justify-content:center; gap:8px;
+    margin-top:10px;
+  }
+  .word-tap{
+    background:#fff; border:2px solid #d8cca8; border-radius:12px;
+    padding:9px 12px; font-weight:800; font-size:1.15rem; cursor:pointer;
+  }
+  .word-tap.wrong-hit{background:var(--coral); color:#fff; border-color:#a8402c;}
+  .word-tap.miss{opacity:.4;}
+
+  /* celebration */
+  .confetti-piece{
+    position:fixed; top:-10px; font-size:22px; z-index:80;
+    animation:fall linear forwards;
+  }
+  @keyframes fall{
+    to{ transform:translateY(105vh) rotate(300deg); opacity:.9;}
+  }
+  .end-card{
+    text-align:center; background:#fff; border-radius:20px; padding:28px 18px;
+    box-shadow:var(--card-shadow);
+  }
+  .end-card .stars{font-size:2.4rem; margin-bottom:6px;}
+  .end-card h2{color:var(--green-deep); margin:4px 0;}
+</style>
+</head>
+<body>
+
+<!-- ================= HUB ================= -->
+<div id="hub" class="screen active">
+  <div class="hub-hero">
+    <span class="mascot">🦓</span>
+    <h1>Nore en het Geheim van de Molen</h1>
+    <p>Kies een spelletje!</p>
+  </div>
+
+  <div class="card-grid">
+    <div class="game-card c1" onclick="openGame('sentence')">
+      <div class="peel"></div>
+      <span class="icon">🧩</span>
+      <h3>Zinnenpuzzel</h3>
+      <p>Zet de woorden in de juiste volgorde</p>
+    </div>
+    <div class="game-card c2" onclick="openGame('quiz')">
+      <div class="peel"></div>
+      <span class="icon">❓</span>
+      <h3>Weetjesquiz</h3>
+      <p>Test wat je nog weet over het verhaal</p>
+    </div>
+    <div class="game-card c3" onclick="openGame('sort')">
+      <div class="peel"></div>
+      <span class="icon">📦</span>
+      <h3>Sorteerspel</h3>
+      <p>Werkwoord, naamwoord of verkleinwoord?</p>
+    </div>
+    <div class="game-card c4" onclick="openGame('wrong')">
+      <div class="peel"></div>
+      <span class="icon">🔍</span>
+      <h3>Zoek de fout</h3>
+      <p>Welk woord klopt niet?</p>
+    </div>
+    <div class="game-card c5" onclick="openGame('order')">
+      <div class="peel"></div>
+      <span class="icon">📖</span>
+      <h3>Verhaal-volgorde</h3>
+      <p>Zet de zinnen in de juiste volgorde</p>
+    </div>
+    <div class="game-card c6" onclick="openGame('type')">
+      <div class="peel"></div>
+      <span class="icon">⌨️</span>
+      <h3>Woordflits</h3>
+      <p>Kijk goed en typ het woord na</p>
+    </div>
+    <div class="game-card c7" onclick="openGame('cloze')">
+      <div class="peel"></div>
+      <span class="icon">✏️</span>
+      <h3>Zin aanvullen</h3>
+      <p>Welk woord past in de zin?</p>
+    </div>
+    <div class="game-card c8" onclick="openGame('grammar')">
+      <div class="peel"></div>
+      <span class="icon">🎯</span>
+      <h3>Werkwoord & Onderwerp</h3>
+      <p>Wijs het juiste woord aan</p>
+    </div>
+    <div class="game-card c9" onclick="openGame('opposite')">
+      <div class="peel"></div>
+      <span class="icon">🔄</span>
+      <h3>Tegengestelde woorden</h3>
+      <p>Zoek de woordparen</p>
+    </div>
+  </div>
+</div>
+
+<!-- ================= GAME: ZINNENPUZZEL ================= -->
+<div id="game-sentence" class="screen">
+  <div class="topbar">
+    <button class="back-btn" onclick="goHub()">←</button>
+    <h2>🧩 Zinnenpuzzel</h2>
+  </div>
+  <div class="progress-dots" id="sentence-dots"></div>
+  <div class="prompt-box">
+    <div class="hint">Zet de woorden in de juiste volgorde</div>
+  </div>
+  <div class="slot-row" id="sentence-slots"></div>
+  <div class="bank" id="sentence-bank"></div>
+  <div class="feedback" id="sentence-feedback"></div>
+  <div class="action-row">
+    <button class="btn secondary" onclick="resetSentence()">Opnieuw</button>
+  </div>
+</div>
+
+<!-- ================= GAME: QUIZ ================= -->
+<div id="game-quiz" class="screen">
+  <div class="topbar">
+    <button class="back-btn" onclick="goHub()">←</button>
+    <h2>❓ Weetjesquiz</h2>
+  </div>
+  <div class="progress-dots" id="quiz-dots"></div>
+  <div id="quiz-body"></div>
+</div>
+
+<!-- ================= GAME: SORTEERSPEL ================= -->
+<div id="game-sort" class="screen">
+  <div class="topbar">
+    <button class="back-btn" onclick="goHub()">←</button>
+    <h2>📦 Sorteerspel</h2>
+  </div>
+  <div class="prompt-box">
+    <div class="hint">Sleep elk woord naar de juiste doos</div>
+  </div>
+  <div class="sort-bins">
+    <div class="bin short" id="bin-werkwoord"><h4>WERK-<br>WOORD</h4><div class="bin-inner" id="bin-werkwoord-inner"></div></div>
+    <div class="bin long" id="bin-naamwoord"><h4>ZELFST.<br>NAAMW.</h4><div class="bin-inner" id="bin-naamwoord-inner"></div></div>
+    <div class="bin other" id="bin-verkleinwoord"><h4>VERKLEIN-<br>WOORD</h4><div class="bin-inner" id="bin-verkleinwoord-inner"></div></div>
+  </div>
+  <div class="bank" id="sort-bank"></div>
+  <div class="feedback" id="sort-feedback"></div>
+  <div class="action-row">
+    <button class="btn secondary" onclick="resetSort()">Opnieuw</button>
+  </div>
+</div>
+
+<!-- ================= GAME: ZOEK DE FOUT ================= -->
+<div id="game-wrong" class="screen">
+  <div class="topbar">
+    <button class="back-btn" onclick="goHub()">←</button>
+    <h2>🔍 Zoek de fout</h2>
+  </div>
+  <div class="progress-dots" id="wrong-dots"></div>
+  <div class="prompt-box">
+    <div class="hint">Tik op het woord dat niet klopt met het verhaal</div>
+  </div>
+  <div class="sentence-tap" id="wrong-sentence"></div>
+  <div class="feedback" id="wrong-feedback"></div>
+</div>
+
+<!-- ================= GAME: VERHAAL-VOLGORDE ================= -->
+<div id="game-order" class="screen">
+  <div class="topbar">
+    <button class="back-btn" onclick="goHub()">←</button>
+    <h2>📖 Verhaal-volgorde</h2>
+  </div>
+  <div class="prompt-box">
+    <div class="hint">Sleep de zinnen in de volgorde van het verhaal</div>
+  </div>
+  <div class="slot-col" id="order-slots"></div>
+  <div class="bank" id="order-bank"></div>
+  <div class="feedback" id="order-feedback"></div>
+  <div class="action-row">
+    <button class="btn secondary" onclick="resetOrder()">Opnieuw</button>
+  </div>
+</div>
+
+<!-- ================= GAME: WOORDFLITS ================= -->
+<div id="game-type" class="screen">
+  <div class="topbar">
+    <button class="back-btn" onclick="goHub()">←</button>
+    <h2>⌨️ Woordflits</h2>
+  </div>
+  <div class="progress-dots" id="type-dots"></div>
+  <div id="type-body"></div>
+</div>
+
+<!-- ================= GAME: ZIN AANVULLEN ================= -->
+<div id="game-cloze" class="screen">
+  <div class="topbar">
+    <button class="back-btn" onclick="goHub()">←</button>
+    <h2>✏️ Zin aanvullen</h2>
+  </div>
+  <div class="progress-dots" id="cloze-dots"></div>
+  <div id="cloze-body"></div>
+</div>
+
+<!-- ================= GAME: WERKWOORD & ONDERWERP ================= -->
+<div id="game-grammar" class="screen">
+  <div class="topbar">
+    <button class="back-btn" onclick="goHub()">←</button>
+    <h2>🎯 Werkwoord & Onderwerp</h2>
+  </div>
+  <div class="progress-dots" id="grammar-dots"></div>
+  <div class="prompt-box">
+    <div class="hint" id="grammar-task">Tik op het werkwoord</div>
+  </div>
+  <div class="sentence-tap" id="grammar-sentence"></div>
+  <div class="feedback" id="grammar-feedback"></div>
+</div>
+
+<!-- ================= GAME: TEGENGESTELDE WOORDEN ================= -->
+<div id="game-opposite" class="screen">
+  <div class="topbar">
+    <button class="back-btn" onclick="goHub()">←</button>
+    <h2>🔄 Tegengestelde woorden</h2>
+  </div>
+  <div class="prompt-box">
+    <div class="hint">Tik twee woorden die tegengesteld zijn aan elkaar</div>
+  </div>
+  <div class="opp-grid" id="opp-grid"></div>
+  <div class="feedback" id="opp-feedback"></div>
+  <div class="action-row"><button class="btn secondary" onclick="resetOpposite()">Opnieuw</button></div>
+</div>
+
+<script>
+/* ============ shared helpers ============ */
+function goHub(){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('hub').classList.add('active');
+}
+function openGame(name){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('game-'+name).classList.add('active');
+  if(name==='sentence') initSentence();
+  if(name==='quiz') initQuiz();
+  if(name==='sort') initSort();
+  if(name==='wrong') initWrong();
+  if(name==='order') initOrder();
+  if(name==='type') initType();
+  if(name==='cloze') initCloze();
+  if(name==='grammar') initGrammar();
+  if(name==='opposite') initOpposite();
+}
+function shuffle(arr){
+  const a=arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+function celebrate(container){
+  const emojis=['🎉','⭐','🦓','✨'];
+  for(let i=0;i<16;i++){
+    const s=document.createElement('span');
+    s.className='confetti-piece';
+    s.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+    s.style.left=Math.random()*100+'vw';
+    s.style.animationDuration=(1.6+Math.random()*1.2)+'s';
+    s.style.fontSize=(16+Math.random()*14)+'px';
+    document.body.appendChild(s);
+    setTimeout(()=>s.remove(),3000);
+  }
+}
+function renderDots(id,total,currentIndex){
+  const el=document.getElementById(id);
+  el.innerHTML='';
+  for(let i=0;i<total;i++){
+    const d=document.createElement('span');
+    if(i<currentIndex) d.className='done';
+    else if(i===currentIndex) d.className='current';
+    el.appendChild(d);
+  }
+}
+
+/* ============ pointer-based drag helper ============ */
+function makeDraggable(chip, onDrop){
+  let startX, startY, ghost=null, originParent, originNext;
+  chip.addEventListener('pointerdown', e=>{
+    if(chip.classList.contains('placed') && chip.dataset.locked==='1') return;
+    e.preventDefault();
+    try{ chip.setPointerCapture(e.pointerId); }catch(err){}
+    const rect=chip.getBoundingClientRect();
+    startX=e.clientX; startY=e.clientY;
+    originParent=chip.parentElement; originNext=chip.nextSibling;
+    ghost=chip.cloneNode(true);
+    ghost.classList.add('ghost');
+    ghost.style.width=rect.width+'px';
+    ghost.style.left=rect.left+'px';
+    ghost.style.top=rect.top+'px';
+    document.body.appendChild(ghost);
+    chip.classList.add('dragging');
+
+    function move(ev){
+      const dx=ev.clientX-startX, dy=ev.clientY-startY;
+      ghost.style.left=(rect.left+dx)+'px';
+      ghost.style.top=(rect.top+dy)+'px';
+      const cx=rect.left+dx+rect.width/2, cy=rect.top+dy+rect.height/2;
+      document.querySelectorAll('.slot,.bin').forEach(z=>{
+        const zr=z.getBoundingClientRect();
+        const inside = cx>=zr.left && cx<=zr.right && cy>=zr.top && cy<=zr.bottom;
+        z.classList.toggle('dropready', inside);
+      });
+    }
+    function up(ev){
+      document.removeEventListener('pointermove',move);
+      document.removeEventListener('pointerup',up);
+      chip.classList.remove('dragging');
+      const dx=ev.clientX-startX, dy=ev.clientY-startY;
+      const cx=rect.left+dx+rect.width/2, cy=rect.top+dy+rect.height/2;
+      ghost.remove();
+      let target=null;
+      document.querySelectorAll('.slot,.bin').forEach(z=>{
+        const zr=z.getBoundingClientRect();
+        z.classList.remove('dropready');
+        const inside = cx>=zr.left && cx<=zr.right && cy>=zr.top && cy<=zr.bottom;
+        if(inside) target=z;
+      });
+      onDrop(chip, target, originParent, originNext);
+    }
+    document.addEventListener('pointermove',move);
+    document.addEventListener('pointerup',up);
+  });
+}
+
+/* ============ GAME 1: ZINNENPUZZEL ============ */
+const sentences = [
+  "Oma herkent de ketting.",
+  "De molen ruikt naar hout.",
+  "Nore vindt een album.",
+  "Oma vertelt een verhaal.",
+  "Nore draagt de ketting trots."
+];
+let sIndex=0;
+
+function initSentence(){ sIndex=0; loadSentence(); }
+function loadSentence(){
+  document.getElementById('sentence-feedback').textContent='';
+  renderDots('sentence-dots', sentences.length, sIndex);
+  const words = sentences[sIndex].replace('.','').split(' ');
+  const slotRow=document.getElementById('sentence-slots');
+  const bank=document.getElementById('sentence-bank');
+  slotRow.innerHTML=''; bank.innerHTML='';
+  words.forEach(()=>{
+    const slot=document.createElement('div');
+    slot.className='slot';
+    slotRow.appendChild(slot);
+  });
+  shuffle(words).forEach(w=>{
+    const chip=document.createElement('div');
+    chip.className='chip';
+    chip.textContent=w;
+    bank.appendChild(chip);
+    makeDraggable(chip, handleSentenceDrop);
+  });
+}
+function handleSentenceDrop(chip, target, originParent, originNext){
+  if(target && target.classList.contains('slot') && !target.firstChild){
+    target.appendChild(chip);
+    target.classList.add('filled');
+    chip.classList.add('placed');
+  } else if(target && target.classList.contains('slot') && target.firstChild){
+    originParent.insertBefore(chip, originNext);
+  } else if(!target){
+    document.getElementById('sentence-bank').appendChild(chip);
+    chip.classList.remove('placed');
+  } else {
+    originParent.insertBefore(chip, originNext);
+  }
+  if(originParent.classList && originParent.classList.contains('slot')){
+    originParent.classList.toggle('filled', !!originParent.firstChild);
+  }
+  checkSentence();
+}
+function checkSentence(){
+  const slots=[...document.querySelectorAll('#sentence-slots .slot')];
+  if(slots.some(s=>!s.firstChild)) return;
+  const attempt=slots.map(s=>s.firstChild.textContent).join(' ')+'.';
+  const fb=document.getElementById('sentence-feedback');
+  if(attempt===sentences[sIndex]){
+    fb.textContent='Goed zo! 🎉';
+    fb.className='feedback good';
+    celebrate();
+    slots.forEach(s=>s.firstChild.dataset.locked='1');
+    setTimeout(()=>{
+      sIndex++;
+      if(sIndex<sentences.length){ loadSentence(); }
+      else { fb.textContent='Alle zinnen gelukt! Je bent een echte leesheld! 🦓⭐'; renderDots('sentence-dots', sentences.length, sentences.length);}
+    },1100);
+  } else {
+    fb.textContent='Bijna! Probeer de woorden te verschuiven.';
+    fb.className='feedback bad';
+  }
+}
+function resetSentence(){ loadSentence(); }
+
+/* ============ GAME 2: QUIZ ============ */
+const quiz = [
+  {q:"Bij wie logeert Nore?", opts:["Bij een vriendin","Bij oma","Bij de buren"], a:1},
+  {q:"Wat herkent oma bij Nore?", opts:["De ketting","De jas","De schoenen"], a:0},
+  {q:"Wat zit er achter de losse plank?", opts:["Niets","Een raam","Een geheim vak"], a:2},
+  {q:"Wat vinden ze in het geheime vak?", opts:["Geld","Een fotoalbum","Een brief van de koning"], a:1},
+  {q:"Wat staat er op het briefje in het album?", opts:["Doe hem weg","Verstop hem","Draag hem met trots"], a:2},
+];
+let qIndex=0, qScore=0;
+
+function initQuiz(){ qIndex=0; qScore=0; loadQuiz(); }
+function loadQuiz(){
+  renderDots('quiz-dots', quiz.length, qIndex);
+  const body=document.getElementById('quiz-body');
+  if(qIndex>=quiz.length){
+    const stars = qScore>=5?'⭐⭐⭐': qScore>=3?'⭐⭐':'⭐';
+    body.innerHTML=`<div class="end-card">
+      <div class="stars">${stars}</div>
+      <h2>Je haalde ${qScore} van de ${quiz.length}!</h2>
+      <p>${qScore===quiz.length?'Wauw, jij kent dit verhaal helemaal!':'Goed gedaan! Lees het verhaal nog eens en probeer opnieuw.'}</p>
+      <div class="action-row"><button class="btn" onclick="initQuiz()">Nog eens</button></div>
+    </div>`;
+    if(qScore===quiz.length) celebrate();
+    return;
+  }
+  const item=quiz[qIndex];
+  body.innerHTML = `<div class="prompt-box"><div class="big">${item.q}</div></div>
+    <div class="quiz-options" id="quiz-options"></div>`;
+  const optsEl=document.getElementById('quiz-options');
+  item.opts.forEach((opt,i)=>{
+    const b=document.createElement('button');
+    b.className='quiz-opt';
+    b.textContent=opt;
+    b.onclick=()=>answerQuiz(i,b);
+    optsEl.appendChild(b);
+  });
+}
+function answerQuiz(i, btn){
+  const item=quiz[qIndex];
+  const allBtns=[...document.querySelectorAll('.quiz-opt')];
+  allBtns.forEach(b=>b.onclick=null);
+  if(i===item.a){
+    btn.classList.add('correct');
+    qScore++;
+    celebrate();
+  } else {
+    btn.classList.add('wrong');
+    allBtns[item.a].classList.add('correct');
+  }
+  setTimeout(()=>{ qIndex++; loadQuiz(); }, 1000);
+}
+
+/* ============ GAME 3: SORTEERSPEL (werkwoord / zelfst. naamwoord / verkleinwoord) ============ */
+const sortWords = [
+  {w:"WANDELT", cat:"werkwoord"},
+  {w:"VERTELT", cat:"werkwoord"},
+  {w:"VINDT", cat:"werkwoord"},
+  {w:"MOLEN", cat:"naamwoord"},
+  {w:"ALBUM", cat:"naamwoord"},
+  {w:"PLANK", cat:"naamwoord"},
+  {w:"BRIEFJE", cat:"verkleinwoord"},
+  {w:"VAKJE", cat:"verkleinwoord"},
+  {w:"HANGERTJE", cat:"verkleinwoord"},
+];
+let sortRemaining=0;
+
+function initSort(){
+  document.getElementById('sort-feedback').textContent='';
+  document.getElementById('bin-werkwoord-inner').innerHTML='';
+  document.getElementById('bin-naamwoord-inner').innerHTML='';
+  document.getElementById('bin-verkleinwoord-inner').innerHTML='';
+  const bank=document.getElementById('sort-bank');
+  bank.innerHTML='';
+  sortRemaining=sortWords.length;
+  shuffle(sortWords).forEach(item=>{
+    const chip=document.createElement('div');
+    chip.className='chip';
+    chip.textContent=item.w;
+    chip.dataset.cat = item.cat;
+    bank.appendChild(chip);
+    makeDraggable(chip, handleSortDrop);
+  });
+}
+function handleSortDrop(chip, target, originParent, originNext){
+  const fb=document.getElementById('sort-feedback');
+  const binMap = {'bin-werkwoord':'werkwoord', 'bin-naamwoord':'naamwoord', 'bin-verkleinwoord':'verkleinwoord'};
+  if(target && binMap[target.id]){
+    const wantCat = binMap[target.id];
+    const isCat = chip.dataset.cat;
+    if(wantCat===isCat){
+      target.querySelector('.bin-inner').appendChild(chip);
+      chip.classList.add('placed');
+      chip.dataset.locked='1';
+      sortRemaining--;
+      fb.textContent='Juist! 👍';
+      fb.className='feedback good';
+      if(sortRemaining===0){
+        fb.textContent='Helemaal gesorteerd! Goed gedaan! 🎉';
+        celebrate();
+      }
+    } else {
+      fb.textContent='Niet helemaal — denk aan het woordsoort!';
+      fb.className='feedback bad';
+      originParent.insertBefore(chip, originNext);
+    }
+  } else {
+    originParent.insertBefore(chip, originNext);
+  }
+}
+function resetSort(){ initSort(); }
+
+/* ============ GAME 4: ZOEK DE FOUT ============ */
+const wrongSet = [
+  {words:["Nore","logeert","bij","de","buren."], wrong:4},
+  {words:["Oma","herkent","de","jas","van","Nore."], wrong:3},
+  {words:["Een","raam","zit","achter","de","plank."], wrong:1},
+  {words:["Ze","vinden","een","fiets","in","het","vak."], wrong:3},
+  {words:["Nore","verstopt","de","ketting","snel."], wrong:1},
+];
+let wIndex=0;
+
+function initWrong(){ wIndex=0; loadWrong(); }
+function loadWrong(){
+  document.getElementById('wrong-feedback').textContent='';
+  renderDots('wrong-dots', wrongSet.length, wIndex);
+  const el=document.getElementById('wrong-sentence');
+  el.innerHTML='';
+  if(wIndex>=wrongSet.length){
+    el.innerHTML=`<div class="end-card">
+      <div class="stars">🦓🎉</div>
+      <h2>Je hebt alle foutjes gevonden!</h2>
+      <div class="action-row"><button class="btn" onclick="initWrong()">Nog eens</button></div>
+    </div>`;
+    celebrate();
+    return;
+  }
+  const item=wrongSet[wIndex];
+  item.words.forEach((w,i)=>{
+    const span=document.createElement('div');
+    span.className='word-tap';
+    span.textContent=w;
+    span.onclick=()=>checkWrong(i,item,span);
+    el.appendChild(span);
+  });
+}
+function checkWrong(i,item,span){
+  const fb=document.getElementById('wrong-feedback');
+  const allSpans=[...document.querySelectorAll('.word-tap')];
+  if(i===item.wrong){
+    span.classList.add('wrong-hit');
+    allSpans.forEach(s=>{ if(s!==span) s.classList.add('miss'); s.onclick=null; });
+    fb.textContent='Gevonden! 🎉';
+    fb.className='feedback good';
+    celebrate();
+    setTimeout(()=>{ wIndex++; loadWrong(); }, 1100);
+  } else {
+    fb.textContent='Nog niet helemaal — probeer een ander woord.';
+    fb.className='feedback bad';
+  }
+}
+
+/* ============ GAME 5: VERHAAL-VOLGORDE ============ */
+const storyOrder = [
+  "Nore logeert een weekend bij oma.",
+  "Oma herkent de ketting van Nore.",
+  "Ze vinden een geheim vak achter een losse plank.",
+  "In het vak zit een oud fotoalbum.",
+  "Nore leest het briefje in het album."
+];
+
+function initOrder(){
+  document.getElementById('order-feedback').textContent='';
+  const slotCol=document.getElementById('order-slots');
+  const bank=document.getElementById('order-bank');
+  slotCol.innerHTML=''; bank.innerHTML='';
+  storyOrder.forEach((_,i)=>{
+    const slot=document.createElement('div');
+    slot.className='slot slot-wide';
+    slot.innerHTML=`<span class="num">${i+1}.</span>`;
+    slotCol.appendChild(slot);
+  });
+  shuffle(storyOrder).forEach(s=>{
+    const chip=document.createElement('div');
+    chip.className='chip-sentence';
+    chip.textContent=s;
+    bank.appendChild(chip);
+    makeDraggable(chip, handleOrderDrop);
+  });
+}
+function handleOrderDrop(chip, target, originParent, originNext){
+  if(target && target.classList.contains('slot-wide') && target.children.length<=1){
+    target.appendChild(chip);
+    target.classList.add('filled');
+    chip.classList.add('placed');
+  } else if(target && target.classList.contains('slot-wide') && target.children.length>1){
+    originParent.insertBefore(chip, originNext);
+  } else if(!target){
+    document.getElementById('order-bank').appendChild(chip);
+    chip.classList.remove('placed');
+  } else {
+    originParent.insertBefore(chip, originNext);
+  }
+  if(originParent.classList && originParent.classList.contains('slot-wide')){
+    originParent.classList.toggle('filled', originParent.children.length>1);
+  }
+  checkOrder();
+}
+function checkOrder(){
+  const slots=[...document.querySelectorAll('#order-slots .slot-wide')];
+  if(slots.some(s=>s.children.length<2)) return;
+  const attempt=slots.map(s=>s.querySelector('.chip-sentence').textContent);
+  const fb=document.getElementById('order-feedback');
+  const isCorrect = attempt.every((s,i)=>s===storyOrder[i]);
+  if(isCorrect){
+    fb.textContent='Helemaal juist! Jij kent het verhaal goed! 🎉';
+    fb.className='feedback good';
+    celebrate();
+  } else {
+    fb.textContent='Bijna! Denk na: wat gebeurde eerst in het verhaal?';
+    fb.className='feedback bad';
+  }
+}
+function resetOrder(){ initOrder(); }
+
+/* ============ GAME 6: WOORDFLITS ============ */
+const flashWords = ["MOLEN","PLANK","ALBUM","FOTO","GEHEIM","OMA"];
+let flashIndex=0, flashScore=0, flashSeconds=6, flashTimerHandle=null;
+
+function initType(){
+  flashIndex=0; flashScore=0;
+  showSpeedPicker();
+}
+function showSpeedPicker(){
+  const body=document.getElementById('type-body');
+  document.getElementById('type-dots').innerHTML='';
+  body.innerHTML = `
+    <div class="prompt-box">
+      <div class="hint">Hoe lang mag je het woord zien?</div>
+    </div>
+    <div class="speed-row" id="speed-row"></div>
+    <div class="action-row"><button class="btn" onclick="startFlash()">Start!</button></div>
+  `;
+  const row=document.getElementById('speed-row');
+  [3,6,10].forEach(sec=>{
+    const b=document.createElement('button');
+    b.className='speed-btn'+(sec===flashSeconds?' active':'');
+    b.textContent=sec+' sec';
+    b.onclick=()=>{
+      flashSeconds=sec;
+      [...row.children].forEach(c=>c.classList.remove('active'));
+      b.classList.add('active');
+    };
+    row.appendChild(b);
+  });
+}
+function startFlash(){
+  flashIndex=0; flashScore=0;
+  loadFlash();
+}
+function loadFlash(){
+  renderDots('type-dots', flashWords.length, flashIndex);
+  const body=document.getElementById('type-body');
+  if(flashIndex>=flashWords.length){
+    const stars = flashScore>=6?'⭐⭐⭐': flashScore>=4?'⭐⭐':'⭐';
+    body.innerHTML=`<div class="end-card">
+      <div class="stars">${stars}</div>
+      <h2>Je typte ${flashScore} van de ${flashWords.length} goed!</h2>
+      <div class="action-row"><button class="btn" onclick="initType()">Nog eens</button></div>
+    </div>`;
+    if(flashScore===flashWords.length) celebrate();
+    return;
+  }
+  const word=flashWords[flashIndex];
+  body.innerHTML = `
+    <div class="flash-stage"><div class="flash-word" id="flash-word">${word}</div></div>
+    <div style="text-align:center" class="flash-timer" id="flash-timer">${flashSeconds}</div>
+  `;
+  let remaining=flashSeconds;
+  clearInterval(flashTimerHandle);
+  flashTimerHandle=setInterval(()=>{
+    remaining--;
+    const t=document.getElementById('flash-timer');
+    if(t) t.textContent=remaining;
+    if(remaining<=0){
+      clearInterval(flashTimerHandle);
+      showTypeInput(word);
+    }
+  },1000);
+}
+function showTypeInput(word){
+  const body=document.getElementById('type-body');
+  body.innerHTML = `
+    <div class="prompt-box"><div class="hint">Typ het woord dat je zag:</div></div>
+    <input type="text" class="type-input" id="type-field" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+    <div class="action-row"><button class="btn" onclick="checkFlash('${word}')">Controleer</button></div>
+    <div class="feedback" id="type-feedback"></div>
+  `;
+  const field=document.getElementById('type-field');
+  field.focus();
+  field.addEventListener('keydown', e=>{ if(e.key==='Enter') checkFlash(word); });
+}
+function checkFlash(word){
+  const field=document.getElementById('type-field');
+  const fb=document.getElementById('type-feedback');
+  const val=field.value.trim().toUpperCase();
+  if(val===word){
+    field.classList.add('correct');
+    fb.textContent='Juist! 🎉';
+    fb.className='feedback good';
+    flashScore++;
+    celebrate();
+  } else {
+    field.classList.add('wrong');
+    fb.textContent='Het woord was: '+word;
+    fb.className='feedback bad';
+  }
+  field.disabled=true;
+  setTimeout(()=>{ flashIndex++; loadFlash(); }, 1400);
+}
+
+/* ============ GAME 7: ZIN AANVULLEN ============ */
+const clozeItems = [
+  {before:"Nore logeert dit weekend bij ", after:".", options:["oma","een vriendin","de buren"], answer:"oma"},
+  {before:"Oma herkent meteen de ", after:" van Nore.", options:["ketting","jas","muts"], answer:"ketting"},
+  {before:"Achter de losse plank zit een geheim ", after:".", options:["vak","raam","gat"], answer:"vak"},
+  {before:"In het vak vinden ze een oud ", after:".", options:["fotoalbum","speelgoed","boek"], answer:"fotoalbum"},
+  {before:"Het briefje zegt: draag hem met ", after:".", options:["trots","angst","spijt"], answer:"trots"},
+];
+let clozeIndex=0, clozeScore=0;
+
+function initCloze(){ clozeIndex=0; clozeScore=0; loadCloze(); }
+function loadCloze(){
+  renderDots('cloze-dots', clozeItems.length, clozeIndex);
+  const body=document.getElementById('cloze-body');
+  if(clozeIndex>=clozeItems.length){
+    const stars = clozeScore>=5?'⭐⭐⭐': clozeScore>=3?'⭐⭐':'⭐';
+    body.innerHTML=`<div class="end-card">
+      <div class="stars">${stars}</div>
+      <h2>Je vulde ${clozeScore} van de ${clozeItems.length} goed in!</h2>
+      <div class="action-row"><button class="btn" onclick="initCloze()">Nog eens</button></div>
+    </div>`;
+    if(clozeScore===clozeItems.length) celebrate();
+    return;
+  }
+  const item=clozeItems[clozeIndex];
+  body.innerHTML = `
+    <div class="prompt-box">
+      <div class="cloze-sentence">${item.before}<span class="cloze-blank" id="cloze-blank">?</span>${item.after}</div>
+    </div>
+    <div class="cloze-options" id="cloze-options"></div>
+  `;
+  const optsEl=document.getElementById('cloze-options');
+  shuffle(item.options).forEach(opt=>{
+    const b=document.createElement('button');
+    b.className='cloze-opt';
+    b.textContent=opt;
+    b.onclick=()=>answerCloze(opt,item,b);
+    optsEl.appendChild(b);
+  });
+}
+function answerCloze(opt,item,btn){
+  const allBtns=[...document.querySelectorAll('.cloze-opt')];
+  allBtns.forEach(b=>b.onclick=null);
+  const blank=document.getElementById('cloze-blank');
+  blank.textContent=opt;
+  if(opt===item.answer){
+    btn.classList.add('correct');
+    blank.classList.add('filled-good');
+    clozeScore++;
+    celebrate();
+  } else {
+    btn.classList.add('wrong');
+    blank.classList.add('filled-bad');
+    allBtns.find(b=>b.textContent===item.answer).classList.add('correct');
+  }
+  setTimeout(()=>{ clozeIndex++; loadCloze(); }, 1200);
+}
+
+/* ============ GAME 8: WERKWOORD & ONDERWERP ============ */
+const grammarItems = [
+  {words:["Nore","wandelt","naar","de","molen."], verb:1, subject:0},
+  {words:["Dan","vertelt","oma","een","verhaal."], verb:1, subject:2},
+  {words:["Nore","vindt","het","album."], verb:1, subject:0},
+  {words:["Blij","glimlacht","oma."], verb:1, subject:2},
+  {words:["Trots","draagt","Nore","de","ketting."], verb:1, subject:2},
+];
+let gIndex=0, gStep=0;
+
+function initGrammar(){ gIndex=0; gStep=0; loadGrammar(); }
+function loadGrammar(){
+  const totalSteps = grammarItems.length*2;
+  const doneSteps = gIndex*2+gStep;
+  renderDots('grammar-dots', totalSteps, doneSteps);
+  const task=document.getElementById('grammar-task');
+  const el=document.getElementById('grammar-sentence');
+  const fb=document.getElementById('grammar-feedback');
+  fb.textContent='';
+  el.innerHTML='';
+  if(gIndex>=grammarItems.length){
+    task.textContent='';
+    el.innerHTML=`<div class="end-card">
+      <div class="stars">🎯🎉</div>
+      <h2>Je hebt alle werkwoorden en onderwerpen gevonden!</h2>
+      <div class="action-row"><button class="btn" onclick="initGrammar()">Nog eens</button></div>
+    </div>`;
+    celebrate();
+    return;
+  }
+  const item=grammarItems[gIndex];
+  task.textContent = gStep===0 ? 'Tik op het werkwoord' : 'Tik op het onderwerp';
+  item.words.forEach((w,i)=>{
+    const span=document.createElement('div');
+    span.className='word-tap';
+    span.textContent=w;
+    span.onclick=()=>checkGrammar(i,item,span);
+    el.appendChild(span);
+  });
+}
+function checkGrammar(i,item,span){
+  const fb=document.getElementById('grammar-feedback');
+  const target = gStep===0 ? item.verb : item.subject;
+  if(i===target){
+    span.classList.add(gStep===0?'verb-hit':'subject-hit');
+    document.querySelectorAll('#grammar-sentence .word-tap').forEach(s=>s.onclick=null);
+    fb.textContent='Juist! 🎉';
+    fb.className='feedback good';
+    celebrate();
+    setTimeout(()=>{
+      if(gStep===0){ gStep=1; loadGrammar(); }
+      else { gStep=0; gIndex++; loadGrammar(); }
+    }, 1100);
+  } else {
+    fb.textContent='Nog niet helemaal — probeer een ander woord.';
+    fb.className='feedback bad';
+  }
+}
+
+/* ============ GAME 9: TEGENGESTELDE WOORDEN ============ */
+const oppositePairs = [
+  ["GROOT","KLEIN"],
+  ["OUD","NIEUW"],
+  ["OPEN","DICHT"],
+  ["BLIJ","BOOS"],
+  ["DAG","NACHT"],
+  ["VOOR","ACHTER"],
+];
+let oppSelected=[], oppMatchedCount=0;
+
+function initOpposite(){
+  document.getElementById('opp-feedback').textContent='';
+  oppSelected=[]; oppMatchedCount=0;
+  const grid=document.getElementById('opp-grid');
+  grid.innerHTML='';
+  const words = shuffle(oppositePairs.flat());
+  words.forEach((w,idx)=>{
+    const tile=document.createElement('div');
+    tile.className='opp-tile';
+    tile.textContent=w;
+    tile.onclick=()=>selectOpposite(tile, w);
+    grid.appendChild(tile);
+  });
+}
+function findPairPartner(word){
+  for(const pair of oppositePairs){
+    if(pair[0]===word) return pair[1];
+    if(pair[1]===word) return pair[0];
+  }
+  return null;
+}
+function selectOpposite(tile, word){
+  if(tile.classList.contains('matched') || tile.classList.contains('selected')) return;
+  if(oppSelected.length===2) return;
+  tile.classList.add('selected');
+  oppSelected.push({tile,word});
+  if(oppSelected.length===2){
+    const [a,b]=oppSelected;
+    const fb=document.getElementById('opp-feedback');
+    if(findPairPartner(a.word)===b.word){
+      a.tile.classList.add('matched'); a.tile.classList.remove('selected');
+      b.tile.classList.add('matched'); b.tile.classList.remove('selected');
+      fb.textContent='Mooi paar! 🎉';
+      fb.className='feedback good';
+      celebrate();
+      oppMatchedCount++;
+      oppSelected=[];
+      if(oppMatchedCount===oppositePairs.length){
+        setTimeout(()=>{ fb.textContent='Alle paren gevonden! Goed gedaan! 🎉'; }, 300);
+      }
+    } else {
+      fb.textContent='Geen tegengestelden — probeer opnieuw.';
+      fb.className='feedback bad';
+      a.tile.classList.add('shake'); b.tile.classList.add('shake');
+      setTimeout(()=>{
+        a.tile.classList.remove('selected','shake');
+        b.tile.classList.remove('selected','shake');
+        oppSelected=[];
+      }, 700);
+    }
+  }
+}
+function resetOpposite(){ initOpposite(); }
+</script>
+</body>
+</html>
