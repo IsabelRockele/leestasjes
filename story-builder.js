@@ -31,7 +31,7 @@
       bas:'rechts van Noor, voor de houten omheining',
       bal:'onder Bas, in het gras',
       emmer:'helemaal rechts onderaan, voor de bloemenstruik',
-      bloem:'helemaal links onderaan, bij de boom'
+      bloem:'onderaan bij de grote boom'
     },
     'spelletjes_jef_en_de_poes_M3.html':{
       jef:'links op het tuinpad, onder de vlinder',
@@ -47,9 +47,18 @@
       eekhoorn:'links tegen de grote boom'
     },
     'spelletjes_nore_en_de_schatkaart_E3.html':{
-      nore:'helemaal links van het stenen pad, voor de haag',
+      nore:'links van het stenen pad, voor de haag',
       bas:'vlak links van het stenen pad, voor de haag',
       kaart:'in de handen van Nore'
+    },
+    'spelletjes_nore_en_de_geheime_sleutel_M4.html':{
+      sleutel:'in het lage, brede vak op de lichtstraal onderaan',
+      kist:'in het grote vak onderaan, rechts van het midden',
+      knikker:'in het kleinste vak helemaal onderaan, links',
+      foto:'in het vak rechts van de kist',
+      deken:'in het grote vak helemaal links onderaan',
+      klok:'in het kleine vak rechts bovenaan',
+      vaas:'in het hoge vak rechts onder de klok'
     }
   };
   const match=page.match(/_(M3|E3|M4|E4|M5|E5)\.html$/i);
@@ -222,14 +231,24 @@
     }
     const current=drag;
     current.piece.removeEventListener('pointermove',moveDrag);
+    const droppedRect=current.piece.getBoundingClientRect();
     current.piece.classList.remove('dragging');
     current.piece.style.left=current.piece.style.top=current.piece.style.width=current.piece.style.height='';
     current.home.insertBefore(current.piece,current.next);
     const zones=[...stage.querySelectorAll('.builder-zone:not(.filled)')];
-    const zone=zones.find(z=>{
+    const candidates=zones.map(z=>{
       const r=z.getBoundingClientRect();
-      return event.clientX>=r.left && event.clientX<=r.right && event.clientY>=r.top && event.clientY<=r.bottom;
-    });
+      const fingerInside=event.clientX>=r.left-12 && event.clientX<=r.right+12 &&
+        event.clientY>=r.top-12 && event.clientY<=r.bottom+12;
+      const overlapWidth=Math.max(0,Math.min(droppedRect.right,r.right)-Math.max(droppedRect.left,r.left));
+      const overlapHeight=Math.max(0,Math.min(droppedRect.bottom,r.bottom)-Math.max(droppedRect.top,r.top));
+      const overlap=overlapWidth*overlapHeight;
+      const smallestArea=Math.min(droppedRect.width*droppedRect.height,r.width*r.height);
+      const overlapPart=smallestArea ? overlap/smallestArea : 0;
+      return {zone:z,score:(fingerInside?2:0)+overlapPart,accepted:fingerInside||overlapPart>=.18};
+    }).filter(item=>item.accepted).sort((a,b)=>b.score-a.score);
+    const correctCandidate=candidates.find(item=>item.zone.dataset.target===current.piece.dataset.target);
+    const zone=correctCandidate ? correctCandidate.zone : (candidates.length ? candidates[0].zone : null);
     drag=null;
     if(zone) tryPlace(current.piece,zone);
     else stage.querySelectorAll('.builder-zone').forEach(z=>z.classList.remove('ready'));
@@ -276,13 +295,32 @@
 
   function makeInstruction(tasks){
     return tasks.map(t=>{
-      if(roundIndex>0){
-        return relativeInstruction(t,chosen[roundIndex-1]);
-      }
       const place=(specialPlaces[page]||{})[t.target];
       if(place) return 'Zet '+article(t.target)+' '+label(t.target)+' '+place+'.';
+      if(roundIndex>0){
+        const reference=findNearbyReference(t);
+        if(reference) return relativeInstruction(t,reference);
+      }
       return 'Zet '+article(t.target)+' '+label(t.target)+' in '+zoneDescription(t)+'.';
     }).join(' ');
+  }
+
+  function findNearbyReference(current){
+    const placedTasks=chosen.slice(0,roundIndex);
+    let best=null,bestDistance=Infinity;
+    placedTasks.forEach(previous=>{
+      const currentX=current.x+current.w/2,currentY=current.y+current.h/2;
+      const previousX=previous.x+previous.w/2,previousY=previous.y+previous.h/2;
+      const centerDistance=Math.hypot(currentX-previousX,currentY-previousY);
+      const horizontalGap=Math.max(0,current.x-(previous.x+previous.w),previous.x-(current.x+current.w));
+      const verticalGap=Math.max(0,current.y-(previous.y+previous.h),previous.y-(current.y+current.h));
+      const edgeDistance=Math.hypot(horizontalGap,verticalGap);
+      if(centerDistance<=30 && edgeDistance<=12 && centerDistance<bestDistance){
+        best=previous;
+        bestDistance=centerDistance;
+      }
+    });
+    return best;
   }
 
   function relativeInstruction(current,previous){
@@ -302,11 +340,13 @@
 
   function zoneDescription(t){
     const cx=t.x+t.w/2,cy=t.y+t.h/2;
-    const horizontal=cx<18?'helemaal links':cx<38?'links':cx<56?'vlak links van het midden':
-      cx<64?'vlak rechts van het midden':cx<82?'rechts':'helemaal rechts';
-    const vertical=cy<28?'helemaal bovenaan':cy<52?'boven het midden':cy<74?'onder het midden':
-      cy<86?'onderaan':'helemaal onderaan';
-    return 'de plek '+horizontal+', '+vertical;
+    const ratio=t.w/t.h,area=t.w*t.h;
+    const size=area<115?'kleine ':area>500?'grote ':'';
+    const shape=ratio>1.55?'lage, brede ':ratio<0.68?'hoge, smalle ':'';
+    const horizontal=cx<22?'helemaal links':cx<42?'links van het midden':
+      cx<58?'in het midden':cx<78?'rechts van het midden':'helemaal rechts';
+    const vertical=cy<27?'bovenaan':cy<50?'boven het midden':cy<72?'onder het midden':'onderaan';
+    return 'het '+size+shape+'vak '+horizontal+', '+vertical;
   }
 
   function placePhrase(t){
@@ -336,7 +376,7 @@
       : value;
   }
   function article(word){
-    return /^(jef|noor|nore|bas|tuur|sven|juf|oma|molenaar)$/i.test(word)?'':(/\b(deur|boom|bal|kaart|kist|bank|bloem|munt|veer|brug|slang|ladder|brief|foto|lamp|hut|pen|sleutel|poes|roos|vis|fles|krab|schelp|vlag|boot|plank|zak|klok|vaas|deken|gieter)\b/i.test(word)?'de':'het');
+    return /^(jef|noor|nore|bas|tuur|sven|juf|oma|molenaar)$/i.test(word)?'':(/\b(deur|boom|bal|kaart|kist|bank|bloem|munt|veer|brug|slang|ladder|brief|foto|lamp|hut|pen|sleutel|knikker|poes|roos|vis|fles|krab|schelp|vlag|boot|plank|zak|klok|vaas|gieter)\b/i.test(word)?'de':'het');
   }
   function shuffleCopy(items){
     const copy=items.slice();
