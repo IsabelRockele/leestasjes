@@ -3,238 +3,358 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Leestasje — Spelletjes</title>
+<meta name="theme-color" content="#345d43">
+<title>Leestasje - Spelletjes bij de verhalen</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@500;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
-    --cream:#FBF6EC;
-    --cream-deep:#F3E9D4;
-    --ink:#2B2B26;
-    --green:#2E6F40;
-    --green-deep:#1F5230;
-    --gold-deep:#B36B00;
-    --card-shadow: 0 6px 0 rgba(43,43,38,0.12);
+    --paper:#fffaf0;
+    --ink:#28332b;
+    --forest:#345d43;
+    --forest-dark:#213e2c;
+    --leaf:#79a85f;
+    --sun:#f3c65c;
+    --pink:#d94c82;
+    --blue:#4b98b9;
   }
   *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
   body{
-    background:var(--cream);
-    font-family:'Nunito',sans-serif;
-    color:var(--ink);
+    margin:0;
     min-height:100vh;
+    color:var(--ink);
+    font-family:'Nunito',sans-serif;
+    background:
+      radial-gradient(circle at 3% 12%,rgba(243,198,92,.32) 0 8rem,transparent 8.1rem),
+      radial-gradient(circle at 98% 32%,rgba(121,168,95,.18) 0 12rem,transparent 12.1rem),
+      linear-gradient(145deg,#e9f4e5 0,#fffaf0 43%,#f8efe1 100%);
+  }
+  body::before{
+    content:"";
+    position:fixed;
+    inset:auto -70px -90px auto;
+    width:250px;
+    height:250px;
+    border:24px solid rgba(52,93,67,.09);
+    border-radius:45% 55% 42% 58%;
+    transform:rotate(-20deg);
+    pointer-events:none;
   }
   h1,h2,h3{font-family:'Baloo 2',sans-serif;}
-
   .hero{
-    text-align:center;
-    padding:36px 16px 20px;
+    position:relative;
+    overflow:hidden;
+    padding:54px 22px 48px;
   }
-  .hero .mascot{font-size:56px; display:block; margin-bottom:6px;}
-  .hero h1{font-size:2rem; color:var(--green-deep); margin:0 0 6px;}
-  .hero p{margin:0; color:#6b6a5f; font-weight:700; font-size:1.05rem;}
-
-  .wrap{max-width:900px; margin:0 auto; padding:10px 16px 60px;}
-
-  .level-section{margin-top:34px;}
+  .hero-inner{
+    max-width:1080px;
+    margin:auto;
+    display:grid;
+    grid-template-columns:minmax(0,1.08fr) minmax(340px,.92fr);
+    align-items:center;
+    gap:48px;
+  }
+  .eyebrow{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    background:#fff;
+    color:var(--forest-dark);
+    border:2px solid rgba(52,93,67,.2);
+    border-radius:999px;
+    padding:7px 13px;
+    font-weight:800;
+    box-shadow:0 4px 0 rgba(52,93,67,.12);
+  }
+  h1{
+    font-size:clamp(2.65rem,7vw,5.15rem);
+    line-height:.91;
+    color:var(--forest-dark);
+    margin:22px 0 18px;
+    letter-spacing:-.035em;
+  }
+  h1 span{color:var(--pink);}
+  .intro{
+    max-width:610px;
+    margin:0;
+    color:#526057;
+    font-size:clamp(1rem,2.2vw,1.2rem);
+    font-weight:700;
+    line-height:1.6;
+  }
+  .hero-note{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    margin-top:24px;
+    font-weight:800;
+    color:var(--forest);
+  }
+  .hero-note b{
+    display:grid;
+    place-items:center;
+    width:38px;
+    height:38px;
+    border-radius:50%;
+    color:#fff;
+    background:var(--forest);
+  }
+  .book-stack{
+    position:relative;
+    min-height:420px;
+  }
+  .book-stack img{
+    position:absolute;
+    width:218px;
+    aspect-ratio:.72;
+    object-fit:cover;
+    object-position:top;
+    border:7px solid #fff;
+    border-radius:20px;
+    box-shadow:0 18px 36px rgba(36,51,40,.24);
+  }
+  .book-stack img:nth-child(1){left:8%;top:54px;transform:rotate(-10deg);}
+  .book-stack img:nth-child(2){right:5%;top:18px;transform:rotate(10deg);}
+  .book-stack img:nth-child(3){left:28%;top:102px;transform:rotate(1deg);z-index:2;}
+  .spark{
+    position:absolute;
+    display:grid;
+    place-items:center;
+    border-radius:50%;
+    background:var(--sun);
+    color:#fff;
+    font-size:1.7rem;
+    box-shadow:0 6px 0 #c48a2d;
+    z-index:3;
+  }
+  .spark.one{width:58px;height:58px;right:0;bottom:72px;}
+  .spark.two{width:46px;height:46px;left:4px;top:5px;font-size:1.2rem;}
+  .level-nav{
+    max-width:1080px;
+    margin:0 auto 28px;
+    padding:0 22px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:9px;
+  }
+  .level-nav a{
+    text-decoration:none;
+    color:var(--forest-dark);
+    background:rgba(255,255,255,.86);
+    border:2px solid rgba(52,93,67,.18);
+    padding:8px 14px;
+    border-radius:999px;
+    font-weight:800;
+  }
+  .level-nav a:hover,.level-nav a:focus-visible{background:var(--forest);color:#fff;}
+  main{max-width:1080px;margin:auto;padding:0 22px 70px;}
+  .level-section{
+    margin-top:34px;
+    padding:24px;
+    border-radius:30px;
+    background:rgba(255,255,255,.66);
+    border:2px solid rgba(72,89,68,.1);
+    box-shadow:0 14px 35px rgba(56,65,48,.08);
+  }
   .level-header{
-    display:flex; align-items:center; gap:12px;
-    margin-bottom:14px;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    margin-bottom:19px;
   }
   .level-badge{
-    font-family:'Baloo 2',sans-serif; font-weight:800; font-size:1.3rem;
-    background:var(--green); color:#fff;
-    border-radius:14px; padding:6px 16px;
-    box-shadow:0 4px 0 var(--green-deep);
+    display:grid;
+    place-items:center;
+    min-width:68px;
+    height:52px;
+    padding:0 16px;
+    border-radius:17px;
+    color:#fff;
+    background:var(--level);
+    box-shadow:0 6px 0 color-mix(in srgb,var(--level) 72%,#382f27);
+    font:800 1.45rem 'Baloo 2',sans-serif;
   }
-  .level-desc{color:#7a7a6e; font-weight:700; font-size:.9rem;}
-
-  .story-grid{
-    display:grid; grid-template-columns:1fr 1fr; gap:16px;
-  }
-  @media (max-width:560px){ .story-grid{grid-template-columns:1fr;} }
-
+  .level-header h2{margin:0;color:var(--forest-dark);font-size:1.35rem;}
+  .level-header p{margin:1px 0 0;color:#687268;font-weight:700;font-size:.9rem;}
+  .story-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
   .story-card{
-    display:block;
-    position:relative;
-    background:#fff;
-    border-radius:20px;
-    padding:20px 18px;
+    --accent:var(--forest);
+    display:grid;
+    grid-template-columns:138px 1fr;
+    min-height:190px;
+    overflow:hidden;
     text-decoration:none;
     color:var(--ink);
-    border:3px solid var(--accent);
-    box-shadow:0 7px 0 var(--accent);
-    transition:transform .12s ease;
+    border-radius:24px;
+    border:3px solid color-mix(in srgb,var(--accent) 58%,#fff);
+    background:#fff;
+    box-shadow:0 8px 0 color-mix(in srgb,var(--accent) 58%,#6f6251),0 15px 26px rgba(50,55,43,.09);
+    transition:transform .18s ease,box-shadow .18s ease;
   }
-  .story-card:active{transform:translateY(6px); box-shadow:0 1px 0 var(--accent);}
-  .story-card .peel{
-    position:absolute; top:-2px; right:-2px;
-    width:30px; height:30px;
-    background:var(--cream);
-    border-left:3px solid var(--accent);
-    border-bottom:3px solid var(--accent);
-    border-radius:0 18px 0 18px;
+  .story-card:hover,.story-card:focus-visible{
+    transform:translateY(-5px) rotate(-.3deg);
+    box-shadow:0 13px 0 color-mix(in srgb,var(--accent) 58%,#6f6251),0 22px 34px rgba(50,55,43,.14);
+    outline:none;
   }
-  .story-card.nore{--accent:#4B93B8;}
-  .story-card.jef{--accent:#B85C9E;}
-
-  .story-card .who{
-    font-weight:800; font-size:.78rem; letter-spacing:.5px;
-    color:var(--accent); text-transform:uppercase; margin-bottom:4px;
+  .story-card img{
+    width:100%;
+    height:100%;
+    min-height:190px;
+    object-fit:cover;
+    object-position:top;
   }
-  .story-card h3{margin:0 0 6px; font-size:1.15rem;}
-  .story-card .go{
-    font-weight:800; font-size:.85rem; color:var(--accent);
-    margin-top:10px;
+  .story-info{padding:19px 18px 17px;display:flex;flex-direction:column;align-items:flex-start;}
+  .who{
+    color:var(--accent);
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    font-size:.76rem;
+    font-weight:800;
   }
-
-  .footer{
-    text-align:center; margin-top:50px; color:#7a7a6e; font-weight:700;
+  .story-card h3{font-size:1.25rem;line-height:1.07;margin:7px 0;color:#30362f;}
+  .story-card p{font-size:.86rem;line-height:1.4;color:#6a7069;margin:0 0 12px;font-weight:700;}
+  .go{
+    margin-top:auto;
+    color:#fff;
+    background:var(--accent);
+    padding:7px 11px;
+    border-radius:10px;
+    font-size:.8rem;
+    font-weight:800;
   }
-  .footer .mascot{font-size:28px;}
+  .pink{--accent:#d84982}.purple{--accent:#7651b7}.green{--accent:#538144}
+  .olive{--accent:#6d7536}.red{--accent:#cf4939}.blue{--accent:#3289aa}
+  .brown{--accent:#9b6335}.plum{--accent:#a43f73}
+  footer{text-align:center;padding:10px 20px 42px;color:#667168;font-weight:800;}
+  footer span{color:var(--pink);}
+  @media(max-width:840px){
+    .hero-inner{grid-template-columns:1fr;}
+    .book-stack{min-height:350px;max-width:500px;width:100%;margin:auto;}
+    .book-stack img{width:185px;}
+    .story-card{grid-template-columns:115px 1fr;}
+  }
+  @media(max-width:620px){
+    .hero{padding-top:30px;}
+    .book-stack{min-height:290px;}
+    .book-stack img{width:145px;border-width:5px;border-radius:14px;}
+    .story-grid{grid-template-columns:1fr;}
+    .level-section{padding:17px;border-radius:23px;}
+    .story-card{grid-template-columns:112px 1fr;min-height:170px;}
+    .story-card img{min-height:170px;}
+    .story-info{padding:15px 14px;}
+  }
 </style>
 </head>
 <body>
-
-<div class="hero">
-  <span class="mascot">🦓</span>
-  <h1>Leestasje — Spelletjes</h1>
-  <p>Kies je niveau en je verhaal!</p>
-</div>
-
-<div class="wrap">
-
-  <div class="level-section">
-    <div class="level-header">
-      <span class="level-badge">M3</span>
-      <span class="level-desc">Net leren lezen</span>
+<header class="hero">
+  <div class="hero-inner">
+    <div>
+      <span class="eyebrow">📚 Juf Zisa's Leestasjes</span>
+      <h1>Lees. Speel.<br><span>Beleef het verhaal.</span></h1>
+      <p class="intro">Kies een AVI-niveau en stap opnieuw in de wereld van Jef, Noor en Nore. Elk verhaal heeft zes speelse leesoefeningen.</p>
+      <div class="hero-note"><b>6</b> niveaus · 12 verhalen · heel veel leesplezier</div>
     </div>
+    <div class="book-stack" aria-label="Een greep uit de verhalen">
+      <img src="assets/covers/Jef_en_de_klas_in_het_bos.webp" alt="Omslag Jef en de klas in het bos">
+      <img src="assets/covers/Nore_en_de_tijdscapsule.webp" alt="Omslag Nore en de tijdscapsule">
+      <img src="assets/covers/Jef_en_de_poes.webp" alt="Omslag Jef en de poes">
+      <span class="spark one">★</span><span class="spark two">✦</span>
+    </div>
+  </div>
+</header>
+
+<nav class="level-nav" aria-label="Kies snel een AVI-niveau">
+  <a href="#m3">M3</a><a href="#e3">E3</a><a href="#m4">M4</a>
+  <a href="#e4">E4</a><a href="#m5">M5</a><a href="#e5">E5</a>
+</nav>
+
+<main>
+  <section class="level-section" id="m3" style="--level:#e14e89">
+    <div class="level-header"><span class="level-badge">M3</span><div><h2>De eerste leesstapjes</h2><p>Voor beginnende lezers</p></div></div>
     <div class="story-grid">
-      <a class="story-card nore" href="spelletjes_noor_en_de_bal_M3.html">
-        <div class="peel"></div>
-        <div class="who">Verhaal 1 — Noor</div>
-        <h3>Noor en de Bal</h3>
-        <div class="go">Speel dit verhaal →</div>
+      <a class="story-card pink" href="spelletjes_noor_en_de_bal_M3.html">
+        <img src="assets/covers/Noor_en_de_bal.webp" alt="">
+        <div class="story-info"><span class="who">Noor · M3</span><h3>Noor en de bal</h3><p>Een vrolijk avontuur met Noor, Bas en een rode bal.</p><span class="go">Speel mee →</span></div>
       </a>
-      <a class="story-card jef" href="spelletjes_jef_en_de_poes_M3.html">
-        <div class="peel"></div>
-        <div class="who">Verhaal 2 — Jef</div>
-        <h3>Jef en de Poes</h3>
-        <div class="go">Speel dit verhaal →</div>
+      <a class="story-card purple" href="spelletjes_jef_en_de_poes_M3.html">
+        <img src="assets/covers/Jef_en_de_poes.webp" alt="">
+        <div class="story-info"><span class="who">Jef · M3</span><h3>Jef en de poes</h3><p>Een warme ontmoeting met een nieuwsgierige witte poes.</p><span class="go">Speel mee →</span></div>
       </a>
     </div>
-  </div>
+  </section>
 
-  <div class="level-section">
-    <div class="level-header">
-      <span class="level-badge">E3</span>
-      <span class="level-desc">Einde 1ste leerjaar</span>
-    </div>
+  <section class="level-section" id="e3" style="--level:#4f8b43">
+    <div class="level-header"><span class="level-badge">E3</span><div><h2>Op avontuur</h2><p>Einde eerste leerjaar</p></div></div>
     <div class="story-grid">
-      <a class="story-card nore" href="spelletjes_nore_en_de_schatkaart_E3.html">
-        <div class="peel"></div>
-        <div class="who">Verhaal 1 — Nore</div>
-        <h3>Nore en de Schatkaart</h3>
-        <div class="go">Speel dit verhaal →</div>
+      <a class="story-card pink" href="spelletjes_nore_en_de_schatkaart_E3.html">
+        <img src="assets/covers/Nore_en__de_schatkaart.webp" alt="">
+        <div class="story-info"><span class="who">Nore · E3</span><h3>Nore en de schatkaart</h3><p>Volg samen met Nore en Bas de tekens op de kaart.</p><span class="go">Op schattenjacht →</span></div>
       </a>
-      <a class="story-card jef" href="spelletjes_jef_en_het_bos_E3.html">
-        <div class="peel"></div>
-        <div class="who">Verhaal 2 — Jef</div>
-        <h3>Jef en de Klas in het Bos</h3>
-        <div class="go">Speel dit verhaal →</div>
+      <a class="story-card green" href="spelletjes_jef_en_het_bos_E3.html">
+        <img src="assets/covers/Jef_en_de_klas_in_het_bos.webp" alt="">
+        <div class="story-info"><span class="who">Jef · E3</span><h3>Jef en de klas in het bos</h3><p>Een groen leesavontuur vol dieren, bladeren en verwondering.</p><span class="go">Het bos in →</span></div>
       </a>
     </div>
-  </div>
+  </section>
 
-  <div class="level-section">
-    <div class="level-header">
-      <span class="level-badge">M4</span>
-      <span class="level-desc">Midden 2de leerjaar</span>
-    </div>
+  <section class="level-section" id="m4" style="--level:#8b7140">
+    <div class="level-header"><span class="level-badge">M4</span><div><h2>Speuren en ontdekken</h2><p>Midden tweede leerjaar</p></div></div>
     <div class="story-grid">
-      <a class="story-card nore" href="spelletjes_nore_en_de_geheime_sleutel_M4.html">
-        <div class="peel"></div>
-        <div class="who">Verhaal 1 — Nore</div>
-        <h3>Nore en de Geheime Sleutel</h3>
-        <div class="go">Speel dit verhaal →</div>
+      <a class="story-card pink" href="spelletjes_nore_en_de_geheime_sleutel_M4.html">
+        <img src="assets/covers/Nore_en_de_geheime_sleutel.webp" alt="">
+        <div class="story-info"><span class="who">Nore · M4</span><h3>Nore en de geheime sleutel</h3><p>Welke deur opent de bijzondere sleutel van Nore?</p><span class="go">Ontdek het geheim →</span></div>
       </a>
-      <a class="story-card jef" href="spelletjes_jef_op_bosspeurtocht_M4.html">
-        <div class="peel"></div>
-        <div class="who">Verhaal 2 — Jef</div>
-        <h3>Jef op Bosspeurtocht</h3>
-        <div class="go">Speel dit verhaal →</div>
+      <a class="story-card olive" href="spelletjes_jef_op_bosspeurtocht_M4.html">
+        <img src="assets/covers/Jef_en_de_klas_op_bosspeurtocht.webp" alt="">
+        <div class="story-info"><span class="who">Jef · M4</span><h3>Jef op bosspeurtocht</h3><p>Zoek sporen, paddenstoelen en verborgen aanwijzingen.</p><span class="go">Ga mee speuren →</span></div>
       </a>
     </div>
-  </div>
+  </section>
 
-  <div class="level-section">
-    <div class="level-header">
-      <span class="level-badge">E4</span>
-      <span class="level-desc">Einde 2de leerjaar</span>
-    </div>
+  <section class="level-section" id="e4" style="--level:#cf4b3e">
+    <div class="level-header"><span class="level-badge">E4</span><div><h2>Geheimen en helden</h2><p>Einde tweede leerjaar</p></div></div>
     <div class="story-grid">
-      <a class="story-card nore" href="spelletjes_nore_en_het_geheim_van_de_molen_E4.html">
-        <div class="peel"></div>
-        <div class="who">Verhaal 1 — Nore</div>
-        <h3>Nore en het Geheim van de Molen</h3>
-        <div class="go">Speel dit verhaal →</div>
+      <a class="story-card plum" href="spelletjes_nore_en_het_geheim_van_de_molen_E4.html">
+        <img src="assets/covers/Nore_en_het_geheim_van_de_molen.webp" alt="">
+        <div class="story-info"><span class="who">Nore · E4</span><h3>Nore en het geheim van de molen</h3><p>Een oud boek brengt Nore dichter bij een bijzonder geheim.</p><span class="go">Naar de molen →</span></div>
       </a>
-      <a class="story-card jef" href="spelletjes_jef_bij_de_brandweer_E4.html">
-        <div class="peel"></div>
-        <div class="who">Verhaal 2 — Jef</div>
-        <h3>Jef bij de Brandweer</h3>
-        <div class="go">Speel dit verhaal →</div>
+      <a class="story-card red" href="spelletjes_jef_bij_de_brandweer_E4.html">
+        <img src="assets/covers/Jef_en_de_klas_bij_de_brandweer.webp" alt="">
+        <div class="story-info"><span class="who">Jef · E4</span><h3>Jef bij de brandweer</h3><p>Ontdek de kazerne, de brandweerwagen en het werk van echte helden.</p><span class="go">Naar de kazerne →</span></div>
       </a>
     </div>
-  </div>
+  </section>
 
-  <div class="level-section">
-    <div class="level-header">
-      <span class="level-badge">M5</span>
-      <span class="level-desc">Midden 3de leerjaar</span>
-    </div>
+  <section class="level-section" id="m5" style="--level:#318bae">
+    <div class="level-header"><span class="level-badge">M5</span><div><h2>Door tijd en natuur</h2><p>Midden derde leerjaar</p></div></div>
     <div class="story-grid">
-      <a class="story-card nore" href="spelletjes_nore_en_de_tijdscapsule_M5.html">
-        <div class="peel"></div>
-        <div class="who">Verhaal 1 — Nore</div>
-        <h3>Nore en de Tijdscapsule</h3>
-        <div class="go">Speel dit verhaal →</div>
+      <a class="story-card plum" href="spelletjes_nore_en_de_tijdscapsule_M5.html">
+        <img src="assets/covers/Nore_en_de_tijdscapsule.webp" alt="">
+        <div class="story-info"><span class="who">Nore · M5</span><h3>Nore en de tijdscapsule</h3><p>Nore en haar oma graven herinneringen uit het verleden op.</p><span class="go">Reis door de tijd →</span></div>
       </a>
-      <a class="story-card jef" href="spelletjes_jef_en_de_klas_aan_zee_M5.html">
-        <div class="peel"></div>
-        <div class="who">Verhaal 2 — Jef</div>
-        <h3>Jef en de Klas aan Zee</h3>
-        <div class="go">Speel dit verhaal →</div>
+      <a class="story-card blue" href="spelletjes_jef_en_de_klas_aan_zee_M5.html">
+        <img src="assets/covers/Jef_en_de_klas_aan_zee.webp" alt="">
+        <div class="story-info"><span class="who">Jef · M5</span><h3>Jef en de klas aan zee</h3><p>Schelpen, zand en een fles met een verrassende boodschap.</p><span class="go">Naar het strand →</span></div>
       </a>
     </div>
-  </div>
+  </section>
 
-  <div class="level-section">
-    <div class="level-header">
-      <span class="level-badge">E5</span>
-      <span class="level-desc">Einde 3de leerjaar</span>
-    </div>
+  <section class="level-section" id="e5" style="--level:#a95a35">
+    <div class="level-header"><span class="level-badge">E5</span><div><h2>Verhalen om te bewaren</h2><p>Einde derde leerjaar</p></div></div>
     <div class="story-grid">
-      <a class="story-card nore" href="spelletjes_nore_het_verhaal_dat_doorgaat_E5.html">
-        <div class="peel"></div>
-        <div class="who">Verhaal 1 — Nore</div>
-        <h3>Nore en het Verhaal dat Doorgaat</h3>
-        <div class="go">Speel dit verhaal →</div>
+      <a class="story-card plum" href="spelletjes_nore_het_verhaal_dat_doorgaat_E5.html">
+        <img src="assets/covers/Nore_en_het_verhaal_dat_doorgaat.webp" alt="">
+        <div class="story-info"><span class="who">Nore · E5</span><h3>Nore en het verhaal dat doorgaat</h3><p>Een warm familieverhaal over herinneringen en een nieuw hoofdstuk.</p><span class="go">Lees verder →</span></div>
       </a>
-      <a class="story-card jef" href="spelletjes_jef_op_bosklassen_E5.html">
-        <div class="peel"></div>
-        <div class="who">Verhaal 2 — Jef</div>
-        <h3>Jef op Bosklassen</h3>
-        <div class="go">Speel dit verhaal →</div>
+      <a class="story-card brown" href="spelletjes_jef_op_bosklassen_E5.html">
+        <img src="assets/covers/Jef_en_de_klas_op_bosklassen.webp" alt="">
+        <div class="story-info"><span class="who">Jef · E5</span><h3>Jef op bosklassen</h3><p>Kampvuur, hutten en een onvergetelijk avontuur met de klas.</p><span class="go">Op bosklassen →</span></div>
       </a>
     </div>
-  </div>
+  </section>
+</main>
 
-  <div class="footer">
-    <span class="mascot">🦓</span><br>
-    Juf Zisa — Leestasje
-  </div>
-
-</div>
+<footer>Gemaakt met <span>♥</span> voor lezers die graag op avontuur gaan · Juf Zisa</footer>
 </body>
 </html>
