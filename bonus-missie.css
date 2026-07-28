@@ -23,6 +23,7 @@
   position:absolute;border:0;border-radius:24px;background:transparent;
   cursor:pointer;padding:0;touch-action:manipulation;
 }
+.bonus-target.current-target{z-index:6;}
 .bonus-target:focus-visible{outline:5px solid #fff;box-shadow:0 0 0 9px var(--sky);}
 .bonus-target.correct{
   background:rgba(116,190,130,.22);

@@ -4,7 +4,7 @@
 
   const css=document.createElement('link');
   css.rel='stylesheet';
-  css.href='bonus-missie.css';
+  css.href='bonus-missie.css?v=2';
   document.head.appendChild(css);
 
   const card=document.createElement('div');
@@ -71,7 +71,9 @@
     const prompt=screen.querySelector('#bonus-prompt');
     const feedback=screen.querySelector('#bonus-feedback');
     hideBonusToast();
-    screen.querySelectorAll('.bonus-target').forEach(b=>b.classList.remove('correct','clue','oops'));
+    screen.querySelectorAll('.bonus-target').forEach(b=>{
+      b.classList.remove('correct','clue','oops','current-target');
+    });
     feedback.textContent='';
     feedback.className='feedback';
     mistakes=0;
@@ -87,6 +89,8 @@
     }
     const listen=screen.querySelector('#bonus-listen');
     if(listen) listen.disabled=false;
+    const currentTarget=screen.querySelector(`.bonus-target[data-target="${tasks[index].target}"]`);
+    if(currentTarget) currentTarget.classList.add('current-target');
     prompt.textContent=tasks[index].text;
   }
   function chooseBonusTarget(target,button){
