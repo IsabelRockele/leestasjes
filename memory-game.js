@@ -71,7 +71,7 @@
 
   const css=document.createElement('link');
   css.rel='stylesheet';
-  css.href='memory-game.css?v=2';
+  css.href='memory-game.css?v=5';
   document.head.appendChild(css);
 
   const card=document.createElement('div');
@@ -129,6 +129,7 @@
     shuffle(cards);
     grid.innerHTML='';
     cards.forEach(makeCard);
+    requestAnimationFrame(fitAllMemoryWords);
     updateScore();
   }
 
@@ -141,7 +142,7 @@
     button.setAttribute('aria-label','Gesloten memorykaart');
     const front=item.type==='image'
       ? '<img class="memory-picture" src="assets/memory/'+game.slug+'/'+assetName(item.key)+'.webp?v=3" alt="'+escapeHtml(item.word)+'">'
-      : '<span class="memory-word">'+escapeHtml(item.word)+'</span>'+
+      : memoryWordHtml(item.word)+
         '<span class="memory-listen" role="button" tabindex="0" aria-label="Lees '+escapeHtml(item.word)+' voor">🔊</span>';
     button.innerHTML='<span class="memory-face memory-back"><span>?</span></span>'+
       '<span class="memory-face memory-front">'+front+'</span>';
@@ -225,6 +226,42 @@
   function assetName(value){
     return String(value).toLowerCase().replace(/\s+/g,'-').replace(/[ëé]/g,'e');
   }
+
+  function isLongSingleWord(value){
+    const word=String(value).trim().replace(/^(de|het)\s+/i,'');
+    return !word.includes(' ') && word.length>=12;
+  }
+
+  function memoryWordHtml(value){
+    const text=String(value).trim();
+    const match=text.match(/^(de|het)\s+(.+)$/i);
+    const article=match?match[1]:'';
+    const main=match?match[2]:text;
+    const singleWord=!main.includes(' ');
+    return '<span class="memory-word">'+
+      (article?'<span class="memory-article">'+escapeHtml(article)+'</span>':'')+
+      '<span class="memory-main'+(singleWord?' memory-single-word':'')+
+      (isLongSingleWord(text)?' memory-long-word':'')+'">'+escapeHtml(main)+'</span>'+
+      '</span>';
+  }
+
+  function fitAllMemoryWords(){
+    grid.querySelectorAll('.memory-main.memory-single-word').forEach(word=>{
+      word.style.fontSize='';
+      let size=parseFloat(getComputedStyle(word).fontSize);
+      const available=Math.max(1,word.parentElement.clientWidth-8);
+      while(word.scrollWidth>available && size>8){
+        size-=.5;
+        word.style.fontSize=size+'px';
+      }
+    });
+  }
+
+  let resizeTimer=null;
+  window.addEventListener('resize',()=>{
+    clearTimeout(resizeTimer);
+    resizeTimer=setTimeout(fitAllMemoryWords,120);
+  });
 
   function escapeHtml(value){
     return String(value).replace(/[&<>"']/g,char=>({

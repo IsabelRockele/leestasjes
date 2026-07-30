@@ -109,6 +109,13 @@
 }
 
 .memory-word{
+  width:100%;
+  box-sizing:border-box;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:.08rem;
   padding:.55rem;
   color:#302a34;
   font-family:'Nunito',sans-serif;
@@ -117,6 +124,27 @@
   line-height:1.12;
   text-align:center;
   overflow-wrap:anywhere;
+}
+
+.memory-article{
+  font-size:.72em;
+  font-weight:800;
+  line-height:1;
+}
+
+.memory-main{
+  display:block;
+  max-width:100%;
+}
+
+.memory-main.memory-single-word{
+  white-space:nowrap;
+  overflow-wrap:normal;
+}
+
+.memory-main.memory-long-word{
+  font-size:clamp(.68rem,1.55vw,1rem);
+  letter-spacing:-.025em;
 }
 
 .memory-listen{
@@ -168,15 +196,18 @@
 
 @media (max-width:700px){
   .memory-wrap{padding-top:.5rem;}
-  .memory-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:.48rem;}
+  .memory-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:.6rem;}
   .memory-help{align-items:flex-start;font-size:.9rem;}
   .memory-face,.memory-card{border-radius:13px;}
   .memory-front{border-width:3px;}
   .memory-word{font-size:clamp(.72rem,3.6vw,1rem);padding:.35rem;}
+  .memory-main.memory-long-word{
+    font-size:clamp(.56rem,2.55vw,.78rem);
+  }
   .memory-listen{width:1.8rem;height:1.8rem;font-size:.9rem;}
 }
 
 @media (max-width:360px){
-  .memory-grid{gap:.34rem;}
+  .memory-grid{gap:.45rem;}
   .memory-help{padding:.65rem .7rem;}
 }
